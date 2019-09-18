@@ -5,6 +5,15 @@
 .linha {
 	margin-top: 3%;
 }
-.btn {
-	width: 150px;
+.btnM {
+	width: 11.6em;
+}
+.btnS{
+	width: 50px;
+}
+.btnS{
+	margin-left: 4.6em;
+}
+#text-area{
+	text-align: right;
 }
