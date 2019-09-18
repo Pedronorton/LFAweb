@@ -1,19 +1,50 @@
-.button {
-	color: black;
-}
-
 .linha {
 	margin-top: 3%;
 }
-.btnM {
-	width: 11.6em;
-}
-.btnS{
-	width: 50px;
-}
-.btnS{
-	margin-left: 4.6em;
-}
 #text-area{
 	text-align: right;
+	padding-right: 5%;
+	padding-left:5%;
+}
+.descricao{
+	padding-top: 0;
+	font-size: 0.8em;
+}
+.palavra{
+	padding-bottom: 1em;
+}
+.campo{
+	max-width: 20em;
+}
+.btn-m {
+	min-width: 10em;
+}
+.grid {
+	display: grid;
+}
+.item {
+	margin-bottom: 5px;
+	text-align: center;
+	font-size: 1.5em;
+}
+.subgrid > div {
+	background: rgba(0,0,0,.3);
+}
+.subgrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-gap: 10px;
+}
+.grid-template-columns-1 {
+	grid-template-columns: 1fr;
+}
+.col2{
+	padding-right: 15em;
+}
+.row{
+	margin-top: 6em;
+	font-size: 1.5em;
+}
+#ok{
+	margin-bottom: 5em;
 }
