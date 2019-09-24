@@ -48,3 +48,6 @@
 #ok{
 	margin-bottom: 5em;
 }
+.fa-exclamation-circle{
+	transform: rotate(180deg);
+}
