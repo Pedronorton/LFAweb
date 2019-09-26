@@ -1,4 +1,4 @@
-package com.ufla.lfapp.core.grammar;
+package br.com.ufla.web.grammar.core;
 
 import android.support.annotation.NonNull;
 

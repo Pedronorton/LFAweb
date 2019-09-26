@@ -1,12 +1,12 @@
 import React from 'react';
-import Interface from './interface/Interface';
+import Rotas from './service/Rotas';
 
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <Interface/>
+      <Rotas/>
     </div>
   );
 }

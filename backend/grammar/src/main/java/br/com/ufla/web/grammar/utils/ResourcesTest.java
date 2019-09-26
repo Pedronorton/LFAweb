@@ -1,6 +1,6 @@
-package com.ufla.lfapp.utils;
+package br.com.ufla.web.grammar.utils;
 
-import com.ufla.lfapp.R;
+//import com.ufla.lfapp.R;
 
 import java.util.HashMap;
 import java.util.Map;

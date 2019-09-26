@@ -3,11 +3,13 @@ package br.com.ufla.web.grammar.core;
 /*
 import android.text.Html;
 import android.text.Spanned;
+*/
 
-import com.ufla.lfapp.R;
-import com.ufla.lfapp.utils.HtmlTags;
-import com.ufla.lfapp.utils.Symbols;*/
+//import br.com.ufla.web.R;
+import br.com.ufla.web.grammar.utils.HtmlTags;
+import br.com.ufla.web.grammar.utils.Symbols;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,10 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Entity;
+//import javax.persistence.Table;
 
-import static com.ufla.lfapp.utils.ResourcesContext.*;
+import static br.com.ufla.web.grammar.utils.ResourcesContext.*;
 
 @Entity
+//@Table(name = "grammar")
 public class Grammar implements Cloneable {
 
     public static final String LAMBDA = "λ";
