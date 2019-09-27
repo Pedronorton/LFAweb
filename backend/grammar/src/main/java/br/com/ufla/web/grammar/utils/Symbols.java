@@ -1,4 +1,4 @@
-package com.ufla.lfapp.utils;
+package br.com.ufla.web.grammar.utils;
 
 /**
  * Created by carlos on 2/1/17.

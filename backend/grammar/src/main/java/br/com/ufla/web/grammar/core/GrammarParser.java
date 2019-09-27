@@ -1,8 +1,8 @@
-package com.ufla.lfapp.core.grammar;
+package br.com.ufla.web.grammar.core;
 
-import com.ufla.lfapp.R;
-import com.ufla.lfapp.utils.HtmlTags;
-import com.ufla.lfapp.utils.ResourcesContext;
+//import com.ufla.lfapp.R;
+// import br.com.ufla.web.grammar.utils.HtmlTags;
+//import com.ufla.lfapp.utils.ResourcesContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import static com.ufla.lfapp.core.grammar.Rule.isDigitOrApostrophe;
+import static br.com.ufla.web.grammar.core.Rule.isDigitOrApostrophe;
 
 
 public class GrammarParser {
@@ -149,8 +149,8 @@ public class GrammarParser {
                 }
                 i = j;
                 if (!setOfVariables.contains(variable.toString())) {
-                    reason.append(ResourcesContext.getString(R.string.exception_not_attr_prod_to_var))
-                            .append(variable).append("'.");
+                    //reason.append(ResourcesContext.getString(R.string.exception_not_attr_prod_to_var))
+                    //        .append(variable).append("'.");
                     return false;
                 }
             }
@@ -180,15 +180,15 @@ public class GrammarParser {
                 if (!g.getVariables().contains(Character.toString(r.getRightSide().charAt(0))) &&
                         !g.getVariables().contains(Character.toString(r.getRightSide()
                                 .charAt(r.getRightSide().length() - 1)))) {
-                    academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
-                            .append(' ').append(r).append(' ')
-                            .append(ResourcesContext.getString(R.string.exception_rule_not_regular_2));
+                    //academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
+                    //        .append(' ').append(r).append(' ')
+                    //        .append(ResourcesContext.getString(R.string.exception_rule_not_regular_2));
                     return false;
                 }
             } else if (counter > 1) {
-                academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
-                        .append(' ').append(r).append(' ')
-                        .append(ResourcesContext.getString(R.string.exception_rule_not_regular_2));
+                //academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
+                //        .append(' ').append(r).append(' ')
+                //        .append(ResourcesContext.getString(R.string.exception_rule_not_regular_2));
                 return false;
             }
             counter = 0;
@@ -206,9 +206,9 @@ public class GrammarParser {
     public static boolean contextFreeGrammar(final Grammar g, StringBuilder academic) {
         for (Rule r : g.getRules()) {
             if (!g.getVariables().contains(r.getLeftSide())) {
-                academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
-                        .append(' ').append(r).append(' ').
-                        append(ResourcesContext.getString(R.string.exception_rule_not_context_free_2));
+                //academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
+                //        .append(' ').append(r).append(' ').
+                //        append(ResourcesContext.getString(R.string.exception_rule_not_context_free_2));
                 return false;
             }
         }
@@ -225,10 +225,10 @@ public class GrammarParser {
         for (Rule element : g.getRules()) {
             if (!containsSentence(g, element.getLeftSide()) || !containsSentence(g, element.getRightSide())
                     || element.getRightSide().length() < element.getLeftSide().length()) {
-                academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
-                        .append(' ').append(element).append(' ')
-                        .append(ResourcesContext.getString(R.string.exception_rule_not_sensitive_free_2))
-                        .append('\n');
+                //academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
+                //        .append(' ').append(element).append(' ')
+                //        .append(ResourcesContext.getString(R.string.exception_rule_not_sensitive_free_2))
+                //        .append('\n');
                 return false;
             }
         }
@@ -245,9 +245,9 @@ public class GrammarParser {
         for (Rule element : g.getRules()) {
             if ((!containsSentence(g, element.getLeftSide()) || element.getLeftSide().equals(Grammar.LAMBDA)) ||
                     (!containsSentence(g, element.getRightSide()) && !element.getRightSide().equals(Grammar.LAMBDA))) {
-                academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
-                        .append(' ').append(element).append(' ')
-                        .append(ResourcesContext.getString(R.string.exception_rule_not_unrestricteble_2));
+                //academic.append(ResourcesContext.getString(R.string.exception_rule_not_in_grammar))
+                //        .append(' ').append(element).append(' ')
+                //        .append(ResourcesContext.getString(R.string.exception_rule_not_unrestricteble_2));
                 return false;
             }
 
@@ -287,21 +287,21 @@ public class GrammarParser {
      *
      * @return Classificação da gramática
      */
-    public static String classifiesGrammar(final Grammar g, final StringBuilder academic) {
-        if (regularGrammar(g, academic)) {
-            return ResourcesContext.getString(R.string.is_regular_grammar);
-        }
-        if (contextFreeGrammar(g, academic)) {
-            return ResourcesContext.getString(R.string.is_context_free_grammar);
-        }
-        if (contextSensibleGrammar(g, academic)) {
-            return ResourcesContext.getString(R.string.is_sensible_context_grammar);
-        }
-        if (unrestrictedGrammar(g, academic)) {
-            return ResourcesContext.getString(R.string.is_unrestricted_grammar);
-        }
-        return ResourcesContext.getString(R.string.not_class_grammar_found);
-    }
+    //public static String classifiesGrammar(final Grammar g, final StringBuilder academic) {
+    //    if (regularGrammar(g, academic)) {
+    //        return ResourcesContext.getString(R.string.is_regular_grammar);
+    //    }
+    //    if (contextFreeGrammar(g, academic)) {
+    //        return ResourcesContext.getString(R.string.is_context_free_grammar);
+    //    }
+    //    if (contextSensibleGrammar(g, academic)) {
+    //        return ResourcesContext.getString(R.string.is_sensible_context_grammar);
+    //    }
+    //    if (unrestrictedGrammar(g, academic)) {
+    //        return ResourcesContext.getString(R.string.is_unrestricted_grammar);
+    //    }
+    //    return ResourcesContext.getString(R.string.not_class_grammar_found);
+    //}
 
 
     private static Set<Set<Integer>> combinationsP(List<Integer> groupSize) {
@@ -473,28 +473,28 @@ public class GrammarParser {
         return aux;
     }
 
-    public static String varToHtml(String var) {
-        StringBuilder varHtml = new StringBuilder();
-        boolean lastIsDigit = false;
-        boolean actualIsDigit;
-        int n = var.length();
-        for (int i = 0; i < n; i++) {
-            char c = var.charAt(i);
-            actualIsDigit = Character.isDigit(c);
-            if (actualIsDigit && !lastIsDigit) {
-                varHtml.append(String.format("%s%s", HtmlTags.SUB_OPEN, HtmlTags.SMALL_OPEN));
-                lastIsDigit = true;
-            } else if (!actualIsDigit && lastIsDigit) {
-                varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
-                lastIsDigit = false;
-            }
-            varHtml.append(c);
-        }
-        if (lastIsDigit) {
-            varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
-        }
-        return varHtml.toString();
-    }
+    // public static String varToHtml(String var) {
+    //     StringBuilder varHtml = new StringBuilder();
+    //     boolean lastIsDigit = false;
+    //     boolean actualIsDigit;
+    //     int n = var.length();
+    //     for (int i = 0; i < n; i++) {
+    //         char c = var.charAt(i);
+    //         actualIsDigit = Character.isDigit(c);
+    //         if (actualIsDigit && !lastIsDigit) {
+    //             varHtml.append(String.format("%s%s", HtmlTags.SUB_OPEN, HtmlTags.SMALL_OPEN));
+    //             lastIsDigit = true;
+    //         } else if (!actualIsDigit && lastIsDigit) {
+    //             varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
+    //             lastIsDigit = false;
+    //         }
+    //         varHtml.append(c);
+    //     }
+    //     if (lastIsDigit) {
+    //         varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
+    //     }
+    //     return varHtml.toString();
+    // }
 
     /**
      * @param reach
@@ -530,14 +530,14 @@ public class GrammarParser {
             //verifica se é essencialmente não contrátil
             if (element.getRightSide().equals(Grammar.LAMBDA) && !g.getInitialSymbol().equals(element.getLeftSide())) {
                 grammarTest = false;
-                academicSupport.setSolutionDescription(ResourcesContext.getString(R.string.grammar_have_empty_production));
+                //academicSupport.setSolutionDescription(ResourcesContext.getString(R.string.grammar_have_empty_production));
             }
         }
         //verifica se possui recursão no símbolo inicial
         for (Rule element : g.getRules()) {
             if (element.getLeftSide().equals(g.getInitialSymbol()) && element.getRightSide().contains(g.getInitialSymbol())) {
                 grammarTest = false;
-                academicSupport.setSolutionDescription(ResourcesContext.getString(R.string.grammar_have_recursion_initial_symbol));
+                //academicSupport.setSolutionDescription(ResourcesContext.getString(R.string.grammar_have_recursion_initial_symbol));
             }
         }
         return grammarTest;

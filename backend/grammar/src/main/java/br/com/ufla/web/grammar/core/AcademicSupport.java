@@ -1,4 +1,4 @@
-package com.ufla.lfapp.core.grammar;
+package br.com.ufla.web.grammar.core;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,6 +16,7 @@ public class AcademicSupport {
     private boolean situation;
     private Map<Integer, String> foundProblems;
     private Grammar grammar;
+    private Grammar newGrammar;
     private String result;
     private String solutionDescription;
     private Set<Rule> insertedRules;
@@ -23,7 +24,6 @@ public class AcademicSupport {
     private List<Set<String>> firstSet;
     private List<Set<String>> secondSet;
     private List<Set<String>> thirdSet;
-
 
     public AcademicSupport() {
         this("", false, new LinkedHashMap<Integer, String>(), "", "",
@@ -44,7 +44,8 @@ public class AcademicSupport {
         this.situation = situation;
         this.foundProblems = foundProblems;
         this.grammar = grammar;
-        setResult(resultGrammar);
+        this.newGrammar = grammar;
+        //this.setResult(resultGrammar);
         this.solutionDescription = solutionDescription;
         this.insertedRules = insertedRules;
         this.irregularRules = irregularRules;
@@ -66,6 +67,7 @@ public class AcademicSupport {
         this.situation = situation;
         this.foundProblems = foundProblems;
         this.grammar = grammar;
+        this.newGrammar = grammar;
         this.result = result;
         this.solutionDescription = solutionDescription;
         this.insertedRules = insertedRules;
@@ -104,7 +106,7 @@ public class AcademicSupport {
         StringBuilder formatedRules = new StringBuilder();
         System.out.println("VAR -> " + variable);
         formatedRules.append(formatElement(variable)).append(" →");
-        for (Rule element : grammar.getRules(variable)) {
+        for (Rule element : grammar.getRules(/*variable*/)) {
             System.out.println(element.toString());
             formatedRules.append(" ").append(formatElement
                     (element.getRightSide())).append(" |");
@@ -227,6 +229,14 @@ public class AcademicSupport {
 
     public void setGrammar(Grammar grammar) {
         this.grammar = (Grammar) grammar.clone();
+    }
+
+    public Grammar getNewGrammar() {
+        return newGrammar;
+    }
+
+    public void setNewGrammar(Grammar grammar) {
+        this.newGrammar = (Grammar) grammar.clone();
     }
 
     public String getResult() {

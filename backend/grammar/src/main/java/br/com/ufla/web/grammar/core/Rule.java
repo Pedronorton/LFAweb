@@ -1,6 +1,6 @@
 package br.com.ufla.web.grammar.core;
 
-import android.support.annotation.NonNull;
+//import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -115,8 +115,9 @@ public class Rule implements Cloneable, Comparable<Rule> {
      * as regras são iguais e inteiro negativo se a regra é menor que a regra
      * especificada .
      */
+    //(@NonNull Rule another)
     @Override
-    public int compareTo(@NonNull Rule another) {
+    public int compareTo(Rule another) {
         if (!leftSide.equals(another.leftSide)) {
             return leftSide.compareTo(another.leftSide);
         }
@@ -386,8 +387,8 @@ public class Rule implements Cloneable, Comparable<Rule> {
     }
 
 
-    public String getRightSideToHtml() {
-        return GrammarParser.varToHtml(rightSide);
-    }
+    // public String getRightSideToHtml() {
+    //     return GrammarParser.varToHtml(rightSide);
+    // }
 
 }
