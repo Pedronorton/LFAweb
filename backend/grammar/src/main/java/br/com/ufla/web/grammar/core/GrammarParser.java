@@ -1,7 +1,7 @@
 package br.com.ufla.web.grammar.core;
 
 //import com.ufla.lfapp.R;
-// import br.com.ufla.web.grammar.utils.HtmlTags;
+import br.com.ufla.web.grammar.utils.HtmlTags;
 //import com.ufla.lfapp.utils.ResourcesContext;
 
 import java.util.ArrayList;
@@ -15,8 +15,7 @@ import static br.com.ufla.web.grammar.core.Rule.isDigitOrApostrophe;
 
 
 public class GrammarParser {
-
-    //"[["+TERMINAL_REGEX+"]*"+"["+VARIABLE_REGEX+"]*]*";
+    // "[["+TERMINAL_REGEX+"]*"+"["+VARIABLE_REGEX+"]*]*";
     // \d           ->  A digit: [0-9]
     // \s           ->  A whitespace character: [ \t\n\x0B\f\r]
     // \p{Upper}    ->  An upper-case alphabetic character:[A-Z]
@@ -32,8 +31,6 @@ public class GrammarParser {
     public static final String RULE_REGEX = String.format("(\\s*%s\\s*%s\\s*%s(\\s*\\|\\s*%s)*)",
             RULE_ELEMENT_LEFT_REGEX, ARROW_REGEX, RULE_ELEMENT_RIGHT_REGEX, RULE_ELEMENT_RIGHT_REGEX);
     public static final String GRAMMAR_REGEX = String.format("%s+", RULE_REGEX);
-
-
     /**
      * Extrai variáveis da gramática
      *
@@ -60,7 +57,6 @@ public class GrammarParser {
         }
         return variables;
     }
-
     /**
      * Extrai terminais da gramática
      *
@@ -76,7 +72,6 @@ public class GrammarParser {
         }
         return terminals;
     }
-
     /**
      * Extrai regras da gramática
      *
@@ -102,7 +97,6 @@ public class GrammarParser {
         }
         return rules;
     }
-
     /**
      * Extrai símbolo inicial da gramática
      *
@@ -117,16 +111,11 @@ public class GrammarParser {
         }
         return txt.substring(0, i);
     }
-
-
     public static boolean verifyInputGrammar(String txtGrammar) {
         return txtGrammar.trim().matches(GRAMMAR_REGEX);
     }
-
-
     public static boolean inputValidate(final String txtGrammar, final StringBuilder reason) {
         Set<String> setOfVariables = new LinkedHashSet<>();
-
         StringTokenizer token1 = new StringTokenizer(txtGrammar, "\n");
         while (token1.hasMoreTokens()) {
             String rule = token1.nextToken().trim();
@@ -138,7 +127,6 @@ public class GrammarParser {
                 cont++;
             }
         }
-
         StringBuilder variable = new StringBuilder();
         for (int i = 0; i < txtGrammar.length(); i++) {
             if (Character.isLetter(txtGrammar.charAt(i)) && Character.isUpperCase(txtGrammar.charAt(i))) {
@@ -158,8 +146,6 @@ public class GrammarParser {
         }
         return true;
     }
-
-
     /**
      * Verifica se a gramática informada é regular
      *
@@ -195,8 +181,6 @@ public class GrammarParser {
         }
         return true;
     }
-
-
     /**
      * Verifica se a gramática informada é livre de contexto
      *
@@ -214,7 +198,6 @@ public class GrammarParser {
         }
         return true;
     }
-
     /**
      * Verifica se a gramática informada é sensível ao contexto
      *
@@ -234,7 +217,6 @@ public class GrammarParser {
         }
         return true;
     }
-
     /**
      * Verifica se a gramática informada é irrestrita
      *
@@ -250,11 +232,9 @@ public class GrammarParser {
                 //        .append(ResourcesContext.getString(R.string.exception_rule_not_unrestricteble_2));
                 return false;
             }
-
         }
         return true;
     }
-
     /**
      * Verifica se uma sentença está contida no conjunto de variáveis e no conjunto de terminais
      *
@@ -281,7 +261,6 @@ public class GrammarParser {
         }
         return contains;
     }
-
     /**
      * Classifica a gramática
      *
@@ -302,8 +281,6 @@ public class GrammarParser {
     //    }
     //    return ResourcesContext.getString(R.string.not_class_grammar_found);
     //}
-
-
     private static Set<Set<Integer>> combinationsP(List<Integer> groupSize) {
         Set<Set<Integer>> combinations = new LinkedHashSet<>();
         for (int i = 1; i <= groupSize.size(); i++) {
@@ -311,9 +288,7 @@ public class GrammarParser {
         }
         return combinations;
     }
-
     private static Set<Set<Integer>> combinationsIntern(List<Integer> groupSize, int k) {
-
         Set<Set<Integer>> allCombos = new LinkedHashSet<>();
         // base cases for recursion
         if (k == 0) {
@@ -326,7 +301,6 @@ public class GrammarParser {
             // so return allCombos without putting any teams in it.
             return allCombos;
         }
-
         // Create a copy of the group with one item removed.
         List<Integer> groupWithoutX = new ArrayList<>(groupSize);
         Integer x = groupWithoutX.remove(groupWithoutX.size() - 1);
@@ -340,7 +314,6 @@ public class GrammarParser {
         allCombos.addAll(combosWithX);
         return allCombos;
     }
-
     // NOT WORKING GENERAL
     public static String combination(String rightSide, Set<String> nullableVariables) {
         List<Integer> indiceCombinations = new ArrayList<>();
@@ -372,8 +345,6 @@ public class GrammarParser {
         }
         return newProduction.toString();
     }
-
-
     /**
      * Verifica a existência de variáveis no conjunto Prev
      *
@@ -390,8 +361,6 @@ public class GrammarParser {
         }
         return true;
     }
-
-
     /**
      * Retorna os elementos que estão no conjunto Chain mas não estão no conjunto Prev
      *
@@ -408,7 +377,6 @@ public class GrammarParser {
         }
         return aux;
     }
-
     /**
      * Atualiza as regras da gramática após remover símbolos inúteis
      *
@@ -473,28 +441,28 @@ public class GrammarParser {
         return aux;
     }
 
-    // public static String varToHtml(String var) {
-    //     StringBuilder varHtml = new StringBuilder();
-    //     boolean lastIsDigit = false;
-    //     boolean actualIsDigit;
-    //     int n = var.length();
-    //     for (int i = 0; i < n; i++) {
-    //         char c = var.charAt(i);
-    //         actualIsDigit = Character.isDigit(c);
-    //         if (actualIsDigit && !lastIsDigit) {
-    //             varHtml.append(String.format("%s%s", HtmlTags.SUB_OPEN, HtmlTags.SMALL_OPEN));
-    //             lastIsDigit = true;
-    //         } else if (!actualIsDigit && lastIsDigit) {
-    //             varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
-    //             lastIsDigit = false;
-    //         }
-    //         varHtml.append(c);
-    //     }
-    //     if (lastIsDigit) {
-    //         varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
-    //     }
-    //     return varHtml.toString();
-    // }
+    public static String varToHtml(String var) {
+        StringBuilder varHtml = new StringBuilder();
+        boolean lastIsDigit = false;
+        boolean actualIsDigit;
+        int n = var.length();
+        for (int i = 0; i < n; i++) {
+            char c = var.charAt(i);
+            actualIsDigit = Character.isDigit(c);
+            if (actualIsDigit && !lastIsDigit) {
+                varHtml.append(String.format("%s%s", HtmlTags.SUB_OPEN, HtmlTags.SMALL_OPEN));
+                lastIsDigit = true;
+            } else if (!actualIsDigit && lastIsDigit) {
+                varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
+                lastIsDigit = false;
+            }
+            varHtml.append(c);
+        }
+        if (lastIsDigit) {
+            varHtml.append(String.format("%s%s", HtmlTags.SMALL_CLOSE, HtmlTags.SUB_CLOSE));
+        }
+        return varHtml.toString();
+    }
 
     /**
      * @param reach

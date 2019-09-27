@@ -6,7 +6,7 @@ import android.text.Spanned;
 */
 
 //import br.com.ufla.web.R;
-// import br.com.ufla.web.grammar.utils.HtmlTags;
+import br.com.ufla.web.grammar.utils.HtmlTags;
 import br.com.ufla.web.grammar.utils.Symbols;
 
 import java.io.Serializable;
@@ -1318,34 +1318,34 @@ public class Grammar implements Cloneable {
 //         return X;
 //     }
 
-//     public Map<String, Set<String>> getRulesMapLeftToRight() {
-//         variables.remove(Symbols.LAMBDA);
-//         Map<String, Set<String>> rulesMapLeftToRight = new LinkedHashMap<>();
-//         rulesMapLeftToRight.put(initialSymbol, new LinkedHashSet<String>());
-//         Set<String> variables = new LinkedHashSet<>(getVariables());
-//         variables.remove(initialSymbol);
-//         for (String variable : variables) {
-//             rulesMapLeftToRight.put(variable, new LinkedHashSet<String>());
-//         }
-//         for (Rule rule : rules) {
-//             Set<String> rightSideSet = rulesMapLeftToRight.get(rule.getLeftSide());
-//             if (rightSideSet == null) {
-//                 rightSideSet = new LinkedHashSet<>();
-//                 rulesMapLeftToRight.put(rule.getLeftSide(), rightSideSet);
-//             }
-//             rightSideSet.add(rule.getRightSide());
-//         }
-//         Set<String> deleteEntry = new LinkedHashSet<>();
-//         for (Map.Entry<String, Set<String>> entry : rulesMapLeftToRight.entrySet()) {
-//             if (entry.getValue().isEmpty()) {
-//                 deleteEntry.add(entry.getKey());
-//             }
-//         }
-//         for (String str : deleteEntry) {
-//             rulesMapLeftToRight.remove(str);
-//         }
-//         return rulesMapLeftToRight;
-//     }
+    public Map<String, Set<String>> getRulesMapLeftToRight() {
+        variables.remove(Symbols.LAMBDA);
+        Map<String, Set<String>> rulesMapLeftToRight = new LinkedHashMap<>();
+        rulesMapLeftToRight.put(initialSymbol, new LinkedHashSet<String>());
+        Set<String> variables = new LinkedHashSet<>(getVariables());
+        variables.remove(initialSymbol);
+        for (String variable : variables) {
+            rulesMapLeftToRight.put(variable, new LinkedHashSet<String>());
+        }
+        for (Rule rule : rules) {
+            Set<String> rightSideSet = rulesMapLeftToRight.get(rule.getLeftSide());
+            if (rightSideSet == null) {
+                rightSideSet = new LinkedHashSet<>();
+                rulesMapLeftToRight.put(rule.getLeftSide(), rightSideSet);
+            }
+            rightSideSet.add(rule.getRightSide());
+        }
+        Set<String> deleteEntry = new LinkedHashSet<>();
+        for (Map.Entry<String, Set<String>> entry : rulesMapLeftToRight.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                deleteEntry.add(entry.getKey());
+            }
+        }
+        for (String str : deleteEntry) {
+            rulesMapLeftToRight.remove(str);
+        }
+        return rulesMapLeftToRight;
+    }
 
 //     public Map<String, Set<Rule>> getRulesMapLeftToRule() {
 //         Map<String, Set<Rule>> rulesMapLeftToRule = new LinkedHashMap<>();
@@ -1365,23 +1365,23 @@ public class Grammar implements Cloneable {
 //         return rulesMapLeftToRule;
 //     }
 
-//     public String toStringRulesMapLeftToRight() {
-//         StringBuilder sb = new StringBuilder();
-//         Map<String, Set<String>> leftToRigth = getRulesMapLeftToRight();
-//         Map<String, Set<String>> leftToRigthSorted = new LinkedHashMap<>();
-//         for (String left : leftToRigth.keySet()) {
-//             leftToRigthSorted.put(left, new LinkedHashSet<>(leftToRigth.get(left)));
-//         }
-//         for (String left : leftToRigthSorted.keySet()) {
-//             sb.append(left).append(" → ");
-//             for (String right : leftToRigthSorted.get(left)) {
-//                 sb.append(right).append(" | ");
-//             }
-//             sb.delete(sb.length() - 3, sb.length());
-//             sb.append("\n");
-//         }
-//         return sb.toString();
-//     }
+    public String toStringRulesMapLeftToRight() {
+        StringBuilder sb = new StringBuilder();
+        Map<String, Set<String>> leftToRigth = getRulesMapLeftToRight();
+        Map<String, Set<String>> leftToRigthSorted = new LinkedHashMap<>();
+        for (String left : leftToRigth.keySet()) {
+            leftToRigthSorted.put(left, new LinkedHashSet<>(leftToRigth.get(left)));
+        }
+        for (String left : leftToRigthSorted.keySet()) {
+            sb.append(left).append(" → ");
+            for (String right : leftToRigthSorted.get(left)) {
+                sb.append(right).append(" | ");
+            }
+            sb.delete(sb.length() - 3, sb.length());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 
 //     private char varActual = 'A' - 1;
 //     private int contVar = 0;
@@ -1427,16 +1427,16 @@ public class Grammar implements Cloneable {
 //     }
 
 
-//     private String toStringCollection(Set<String> collection) {
-//         StringBuilder sb = new StringBuilder("{ ");
-//         for (String o : collection) {
-//             sb.append(o)
-//                     .append(", ");
-//         }
-//         sb.deleteCharAt(sb.length() - 2);
-//         sb.append('}');
-//         return sb.toString();
-//     }
+    private String toStringCollection(Set<String> collection) {
+        StringBuilder sb = new StringBuilder("{ ");
+        for (String o : collection) {
+            sb.append(o)
+                    .append(", ");
+        }
+        sb.deleteCharAt(sb.length() - 2);
+        sb.append('}');
+        return sb.toString();
+    }
 
 //     @Override
 //     public String toString() {
@@ -1452,13 +1452,13 @@ public class Grammar implements Cloneable {
 //         return sb.toString();
 //     }
 
-//     private String replaceStringtoHtml(String str) {
-//         return str.replace("\n", HtmlTags.BREAK_LINE);
-//     }
+    private String replaceStringtoHtml(String str) {
+        return str.replace("\n", HtmlTags.BREAK_LINE);
+    }
 
-//     private String toHtmlCollection(Set<String> collection) {
-//         return replaceStringtoHtml(toStringCollection(collection));
-//     }
+    private String toHtmlCollection(Set<String> collection) {
+        return replaceStringtoHtml(toStringCollection(collection));
+    }
 
 //     public Spanned toHtmlFormated() {
 //         AcademicSupport academic = new AcademicSupport();
@@ -1507,33 +1507,31 @@ public class Grammar implements Cloneable {
 //         return grammarHtml.toString();
 //     }
 
-    // public String toHtml() {
-    //     final String[] parameters =
-    //             getString(
-    //                     R.string.grammar_to_string_parameters
-    //             ).split("#");
-    //     StringBuilder sb = new StringBuilder()
-    //             .append(HtmlTags.BOLD_OPEN)
-    //             .append(parameters[0])
-    //             .append(HtmlTags.BOLD_CLOSE)
-    //             .append(toHtmlCollection(variables))
-    //             .append(HtmlTags.BREAK_LINE)
-    //             .append(HtmlTags.BOLD_OPEN)
-    //             .append(parameters[1])
-    //             .append(HtmlTags.BOLD_CLOSE)
-    //             .append(toHtmlCollection(terminals))
-    //             .append(HtmlTags.BREAK_LINE)
-    //             .append(HtmlTags.BOLD_OPEN)
-    //             .append(parameters[2])
-    //             .append(HtmlTags.BOLD_CLOSE)
-    //             .append(replaceStringtoHtml(initialSymbol))
-    //             .append(HtmlTags.BREAK_LINE)
-    //             .append(HtmlTags.BOLD_OPEN)
-    //             .append(parameters[3])
-    //             .append(HtmlTags.BOLD_CLOSE)
-    //             .append(HtmlTags.BREAK_LINE)
-    //             .append(replaceStringtoHtml(toStringRulesMapLeftToRight()));
-    //     return Html.fromHtml(sb.toString());
-    // }
+    public String toHtml() {
+        String varStr = "Variáveis: #Terminais: #Símbolo inicial: # Regras:";
+        final String[] parameters = varStr.split("#");
+        StringBuilder sb = new StringBuilder()
+                .append(HtmlTags.BOLD_OPEN)
+                .append(parameters[0])
+                .append(HtmlTags.BOLD_CLOSE)
+                .append(toHtmlCollection(variables))
+                .append(HtmlTags.BREAK_LINE)
+                .append(HtmlTags.BOLD_OPEN)
+                .append(parameters[1])
+                .append(HtmlTags.BOLD_CLOSE)
+                .append(toHtmlCollection(terminals))
+                .append(HtmlTags.BREAK_LINE)
+                .append(HtmlTags.BOLD_OPEN)
+                .append(parameters[2])
+                .append(HtmlTags.BOLD_CLOSE)
+                .append(replaceStringtoHtml(initialSymbol))
+                .append(HtmlTags.BREAK_LINE)
+                .append(HtmlTags.BOLD_OPEN)
+                .append(parameters[3])
+                .append(HtmlTags.BOLD_CLOSE)
+                .append(HtmlTags.BREAK_LINE)
+                .append((toStringRulesMapLeftToRight()));
+        return sb.toString();
+    }
 
 }

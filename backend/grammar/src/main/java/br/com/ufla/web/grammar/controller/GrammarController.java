@@ -26,7 +26,8 @@ public class GrammarController {
 
     @GetMapping("/grammar")
     public String getHtml () {
-        return "www";// gramatica.toString();
+        System.out.println(gramatica.toHtml());
+        return gramatica.toHtml();// gramatica.toString();
     }
 
     @ResponseBody
