@@ -1,6 +1,10 @@
 package br.com.ufla.web.grammar.controller;
 
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 //import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +26,97 @@ import br.com.ufla.web.grammar.core.Grammar;
 @RestController
 public class GrammarController {
 
-    private Grammar gramatica;
+    private Grammar[] gr = new Grammar[2];
+    private String variables;
+
+    public void setVariables(String variables) {
+		this.variables = variables;
+	}
+    
+    public String getVariables() {
+		return variables;
+	}
+
+	public Grammar criaGramatica (String s) {
+      	
+        String initSym = String.valueOf(s.charAt(0));
+        
+        String[] listRules = s.split("\n");        
+        String[] listVariables;
+        String[] listTerminal;
+
+        Set<String> var = new LinkedHashSet<>();
+        Set<String> terminal = new LinkedHashSet<>();
+
+        for (String rule : listRules) {
+        	
+        	//aSb bb
+        	String[] temp = rule.split("->")[1].split("|");
+        	
+        	//S A
+        	var.add(String.valueOf(rule.split("->")[0].replace(" ", "")));
+        	
+        	for (String tp : temp) {
+        		for (int i = 0; i <  tp.length(); ++i) {
+                    if ((Character.isLowerCase(tp.charAt(i)))) terminal.add(String.valueOf(tp.charAt(i)));
+                }
+        	}
+        
+        }
+
+        listVariables = new String[var.size()];
+        int i = 0;
+        for (String v : var) {
+            listVariables[i] = v;
+            ++i;
+        }
+
+        listTerminal = new String[terminal.size()];
+        i = 0;
+        for (String t : terminal) {
+            listTerminal[i] = t;
+            ++i;
+        }
+        
+//        System.out.println("inicial: " + initSym);
+//        
+//        System.out.print("Termis : ");
+//        for(String t : listTerminal) {
+//        	System.out.print(t + " ");
+//        }
+//        System.out.println();
+//        
+//        System.out.print("vars : ");
+//        for(String v : listVariables) {
+//        	System.out.print(v + " ");
+//        }
+//        System.out.println();
+//      
+//        System.out.print("Rules : ");
+//        for(String r : listRules) {
+//        	System.out.print(r + " ");
+//        }
+//        System.out.println();
+
+        Grammar g = new Grammar(listVariables, listTerminal, initSym, listRules);
+
+        return g;
+    }
 
     @GetMapping("/grammar")
     public String getHtml () {
-        System.out.println(gramatica.toHtml());
-        return gramatica.toHtml();// gramatica.toString();
+        System.out.println(gr[1].toHtml());
+        return gr[0].toHtml(); //+ gr[1].toStringHtmlWithColorInSpecialRules(gr[1].getRules(), "red");
     }
 
     @ResponseBody
     @PostMapping("/{palavra}/grammar/nonContracting")
-    public ResponseEntity<Void> CriaGramaticaNonContracting (@PathVariable String palavra, @RequestBody Grammar g ) {
-        gramatica = g.getGrammarEssentiallyNoncontracting(g).getNewGrammar();
-
+    public ResponseEntity<Void> CriaGramaticaNonContracting (@PathVariable String palavra, @RequestBody GrammarController attrGCont ) {
+        
+    	Grammar gram = criaGramatica(attrGCont.getVariables());
+    	gr[0] = gram;
+    	gr[1] = gram.getGrammarWithInitialSymbolNotRecursive(gram).getNewGrammar();
+    	
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
 
         return ResponseEntity.created(uri).build();
@@ -42,12 +124,15 @@ public class GrammarController {
 
     @ResponseBody
     @PostMapping("/{palavra}/grammar/nonRecursiveInitial")
-    public ResponseEntity<Void> CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody Grammar g ) {
-        
-    	gramatica = g.getGrammarWithInitialSymbolNotRecursive(g).getNewGrammar();
+    public ResponseEntity<Void> CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody GrammarController attrGCont ) {
+    	
+        Grammar gram = criaGramatica(attrGCont.getVariables());
+        gr[0] = gram;
+    	gr[1] = gram.getGrammarWithInitialSymbolNotRecursive(gram).getNewGrammar();
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonRecursiveInitial").buildAndExpand(" ").toUri();
 
         return ResponseEntity.created(uri).build();
     }
+
 }

@@ -387,8 +387,8 @@ public class Rule implements Cloneable, Comparable<Rule> {
     }
 
 
-    // public String getRightSideToHtml() {
-    //     return GrammarParser.varToHtml(rightSide);
-    // }
+     public String getRightSideToHtml() {
+         return GrammarParser.varToHtml(rightSide);
+     }
 
 }

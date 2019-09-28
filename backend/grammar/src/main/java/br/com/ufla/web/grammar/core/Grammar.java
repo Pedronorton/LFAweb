@@ -120,8 +120,8 @@ public class Grammar implements Cloneable {
 
     public void setInitialSymbol(String initialSymbol) {
         if (initialSymbol != null
-                && this.variables.contains(initialSymbol) ) {
-//                && !initialSymbol.equals(this.initialSymbol)) {
+                && this.variables.contains(initialSymbol)
+                && !initialSymbol.equals(this.initialSymbol)) {
             this.initialSymbol = initialSymbol;
             Set<String> newVariablesOrder = new LinkedHashSet<>();
             newVariablesOrder.add(initialSymbol);
@@ -1378,7 +1378,7 @@ public class Grammar implements Cloneable {
                 sb.append(right).append(" | ");
             }
             sb.delete(sb.length() - 3, sb.length());
-            sb.append("\n");
+            sb.append("<br/>");
         }
         return sb.toString();
     }
@@ -1467,45 +1467,45 @@ public class Grammar implements Cloneable {
 //     }
 
 
-//     /**
-//      * Gera uma string, formatada em HTML, representando a gramática.
-//      * Porém, modifica as cores das regras passadas recebidas por parâmetro (rulesDifColor),
-//      * para a cor também recebida por parâmetro.
-//      *
-//      * @param rulesDifColor regras especificadas para a mudança de cor
-//      * @param colorRules    cor definida para aplicar nas regras
-//      * @return string, formatada em HTML, representando a gramática com a cor das regras
-//      * especificadas modificadas.
-//      */
-//     public String toStringHtmlWithColorInSpecialRules(Set<Rule> rulesDifColor,
-//                                                       String colorRules) {
-//         final int PIPE_N = Symbols.PIPE.length();
-//         final String FONT_COLOR_OPEN = HtmlTags.FONT_COLOR_OPEN(colorRules);
-//         StringBuilder grammarHtml = new StringBuilder();
-//         for (String var : this.variables) {
-//             grammarHtml.append(GrammarParser.varToHtml(var))
-//                     .append(String.format(" %s ", Symbols.ARROW));
-//             for (Rule rule : this.getRules(var)) {
-//                 if (rulesDifColor.contains(rule)) {
-//                     grammarHtml.append(String.format(
-//                             " %s%s%s %s",
-//                             FONT_COLOR_OPEN,
-//                             rule.getRightSideToHtml(),
-//                             HtmlTags.FONT_CLOSE,
-//                             Symbols.PIPE));
-//                 } else {
-//                     grammarHtml.append(String.format(
-//                             " %s %s",
-//                             rule.getRightSideToHtml(),
-//                             Symbols.PIPE));
-//                 }
-//             }
-//             final int N = grammarHtml.length();
-//             grammarHtml.delete(N - PIPE_N - 1, N)
-//                     .append(HtmlTags.BREAK_LINE);
-//         }
-//         return grammarHtml.toString();
-//     }
+     /**
+      * Gera uma string, formatada em HTML, representando a gramática.
+      * Porém, modifica as cores das regras passadas recebidas por parâmetro (rulesDifColor),
+      * para a cor também recebida por parâmetro.
+      *
+      * @param rulesDifColor regras especificadas para a mudança de cor
+      * @param colorRules    cor definida para aplicar nas regras
+      * @return string, formatada em HTML, representando a gramática com a cor das regras
+      * especificadas modificadas.
+      */
+     public String toStringHtmlWithColorInSpecialRules(Set<Rule> rulesDifColor,
+                                                       String colorRules) {
+         final int PIPE_N = Symbols.PIPE.length();
+         final String FONT_COLOR_OPEN = HtmlTags.FONT_COLOR_OPEN(colorRules);
+         StringBuilder grammarHtml = new StringBuilder();
+         for (String var : this.variables) {
+             grammarHtml.append(GrammarParser.varToHtml(var))
+                     .append(String.format(" %s ", Symbols.ARROW));
+             for (Rule rule : this.getRules(/*var*/)) {
+                 if (rulesDifColor.contains(rule)) {
+                     grammarHtml.append(String.format(
+                             " %s%s%s %s",
+                             FONT_COLOR_OPEN,
+                             rule.getRightSideToHtml(),
+                             HtmlTags.FONT_CLOSE,
+                             Symbols.PIPE));
+                 } else {
+                     grammarHtml.append(String.format(
+                             " %s %s",
+                             rule.getRightSideToHtml(),
+                             Symbols.PIPE));
+                 }
+             }
+             final int N = grammarHtml.length();
+             grammarHtml.delete(N - PIPE_N - 1, N)
+                     .append(HtmlTags.BREAK_LINE);
+         }
+         return grammarHtml.toString();
+     }
 
     public String toHtml() {
         String varStr = "Variáveis: #Terminais: #Símbolo inicial: # Regras:";
