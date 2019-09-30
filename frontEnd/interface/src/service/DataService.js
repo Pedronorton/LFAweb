@@ -4,14 +4,19 @@ const URL = "http://localhost:8080";
 
 class DataService {
 
-    criarGrammatica (dados) {
-        return Axios.post(`${URL}/grammar`, dados);
+    criaNonRecursiveInitial (dados) {
+        console.log("DADOS VAR: " + dados.variables);
+        console.log("DADOS WORD: " + dados.palavras);
+        return Axios.post(`${URL}/${dados.palavra}/grammar/nonRecursiveInitial`, dados);
     }
 
     getGramatica () {
         return Axios.get(`${URL}/grammar`);
     }
 
+    getGramaticaHTML () {
+        return Axios.get(`${URL}/grammar/html`);
+    }
 
 }
 

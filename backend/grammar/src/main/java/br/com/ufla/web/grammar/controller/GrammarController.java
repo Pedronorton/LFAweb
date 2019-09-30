@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.annotation.SessionScope;
+//import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.ufla.web.grammar.core.Grammar;
 
-@SessionScope
-@CrossOrigin(origins = {"http://locahost:3000", "http://localhost:4200"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "localhost:3000", "localhost:4200"})
 @RestController
 public class GrammarController {
 
@@ -103,10 +102,16 @@ public class GrammarController {
         return g;
     }
 
-    @GetMapping("/grammar")
+    @GetMapping("/grammar/html")
     public String getHtml () {
-        System.out.println(gr[1].toHtml());
-        return gr[0].toHtml(); //+ gr[1].toStringHtmlWithColorInSpecialRules(gr[1].getRules(), "red");
+        System.out.println("HTML : " + gr[1].toHtml());
+        return gr[1].toHtml() + "\n\n" +gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
+    }
+    
+    @GetMapping("/grammar")
+    public String getGrammar () {
+        System.out.println("grammar[1]: " + gr[1]);
+        return gr[1].toString();
     }
 
     @ResponseBody
@@ -126,6 +131,8 @@ public class GrammarController {
     @PostMapping("/{palavra}/grammar/nonRecursiveInitial")
     public ResponseEntity<Void> CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody GrammarController attrGCont ) {
     	
+    	
+    	System.out.println("attrGCont.getVariables(): " + attrGCont.getVariables());
         Grammar gram = criaGramatica(attrGCont.getVariables());
         gr[0] = gram;
     	gr[1] = gram.getGrammarWithInitialSymbolNotRecursive(gram).getNewGrammar();

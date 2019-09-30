@@ -1,11 +1,17 @@
-import React from 'react';
+import React , {Component}from 'react';
 import './css/Bootstrap.css';
 
 
-function App() {
-  return (
-    <div>OI</div>
-  );
-}
+class User extends Component() {
+    constructor (props) {
+        super(props);
+    }
 
-export default App;
+    render () {
+      return (
+        <div>{this.props.gramatica}</div>
+      )
+    }
+
+}
+export default User;
