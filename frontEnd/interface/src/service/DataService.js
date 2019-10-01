@@ -10,6 +10,17 @@ class DataService {
         return Axios.post(`${URL}/${dados.palavra}/grammar/nonRecursiveInitial`, dados);
     }
 
+    criaNonContracting (dados) {
+        console.log("DADOS VAR: " + dados.variables);
+        console.log("DADOS WORD: " + dados.palavras);
+        return Axios.post(`${URL}/${dados.palavra}/grammar/nonContracting`, dados);
+    }
+
+    criaHTML (dados) {
+        
+        return Axios.post(`${URL}/grammar/HTML`, dados);
+    }
+
     getGramatica () {
         return Axios.get(`${URL}/grammar`);
     }
