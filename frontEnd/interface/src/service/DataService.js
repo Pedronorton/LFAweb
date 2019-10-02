@@ -14,7 +14,25 @@ class DataService {
         console.log("DADOS VAR: " + dados.variables);
         console.log("DADOS WORD: " + dados.palavras);
         return Axios.post(`${URL}/${dados.palavra}/grammar/nonContracting`, dados);
-    }
+		}
+		
+		criaNonCascade (dados) {
+			console.log("DADOS VAR: " + dados.variables);
+			console.log("DADOS WORD: " + dados.palavras);
+			return Axios.post(`${URL}/${dados.palavra}/grammar/nonCascade`, dados);
+		}
+		
+		criaOnlyTerm (dados) {
+			console.log("DADOS VAR: " + dados.variables);
+			console.log("DADOS WORD: " + dados.palavras);
+			return Axios.post(`${URL}/${dados.palavra}/grammar/onlyTerm`, dados);
+		}
+		
+		criaOnlyReach (dados) {
+			console.log("DADOS VAR: " + dados.variables);
+			console.log("DADOS WORD: " + dados.palavras);
+			return Axios.post(`${URL}/${dados.palvra}/grammar/onlyReach`, dados);
+		}
 
     criaHTML (dados) {
         

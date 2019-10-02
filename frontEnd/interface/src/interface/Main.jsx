@@ -141,7 +141,67 @@ class Main extends Component {
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>});
                 }
             ).then(_ => this.props.history.push(`/`));
-    }
+		}
+		
+		onSubmitNonCascade (values) {
+			console.log("Non Cascade: " + values);
+			let dados ={
+				palavra: values.palavra,
+				variables: values.variables
+			};
+			
+			DataService.criaNonCascade(dados).then(
+				response => {
+					console.log("Non Cascade: " + response.data);
+					
+					this.setState({variables: response.data[2]});
+					this.setState({varHTML: <div>
+						<div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+						<div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+					</div>});
+				}
+			)
+		}
+		
+		onSubmitOnlyTerm (values) {
+			console.log("Only TERM: " + values);
+			let dados ={
+				palavra: values.palavra,
+				variables: values.variables
+			};
+			
+			DataService.criaOnlyTerm(dados).then(
+				response => {
+					console.log("Only TERM: " + response.data);
+					
+					this.setState({variables: response.data[2]});
+					this.setState({varHTML: <div>
+						<div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+						<div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+					</div>});
+				}
+			)
+		}
+		
+		onSubmitOnlyReach (values) {
+			console.log("Only REACH: " + values);
+			let dados ={
+				palavra: values.palavra,
+				variables: values.variables
+			};
+			
+			DataService.criaOnlyReach(dados).then(
+				response => {
+					console.log("Only REACH: " + response.data);
+					
+					this.setState({variables: response.data[2]});
+					this.setState({varHTML: <div>
+						<div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+						<div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+					</div>});
+				}
+			)
+		}
     
     componentDidMount () {
         if (this.state.palavra !== "") {
@@ -222,7 +282,19 @@ class Main extends Component {
                         <div className="item">
                             <button type="button" className="btn btn-primary btn-m" onClick={_ => this.onSubmitNonContracting(this.state)}>Essentially non contractile</button>
                         </div>
+												
+												<div className="item">
+													<button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitNonCascade(this.state)}>No cascade</button>
+												</div>
+												
+												<div className="item">
+													<button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyTerm(this.state)}>Only terminals</button>
+												</div>
                         
+												<div className="item">
+													<button type="button" className="btn btn-primary btn-m" onclick={_ =>this.onSubmitOnlyReach(this.state)}>Only reacheable</button>
+												</div>
+												
                         <div className = "item">
                             <button type = "button" className = "btn btn-primary btn-m" onClick={this.historicoFunction}>Histórico</button>
                         </div>

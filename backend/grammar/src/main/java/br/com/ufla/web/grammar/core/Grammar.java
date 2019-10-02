@@ -337,13 +337,13 @@ public class Grammar implements Cloneable {
 
         }
 
+
+        gc.setRules(newSetOfRules);
+
         //seta feedback acadêmico no objeto
         academicSupport.setFoundProblems(foundProblems);
         academicSupport.setResult(gc);
         academicSupport.setNewGrammar(gc);
-
-
-        gc.setRules(newSetOfRules);
 
         return academicSupport;
     }
