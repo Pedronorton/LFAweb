@@ -386,6 +386,7 @@ public class GrammarParser {
      */
     public static Set<Rule> updateRules(Set<String> prev, Grammar g,
                                         final AcademicSupport academic) {
+    	
         Set<Rule> newRules = new LinkedHashSet<>();
         for (Rule element : g.getRules()) {
             if (prev.contains(element.getLeftSide())) {
@@ -414,11 +415,15 @@ public class GrammarParser {
                     Rule r = new Rule();
                     r.setLeftSide(element.getLeftSide());
                     r.setRightSide(newRule);
+                    System.out.println("RULE : " + r);
                     newRules.add(r);
                 }
             } else {
                 academic.insertIrregularRule(new Rule(element));
             }
+        }
+        for (Rule r :  newRules) {
+        	System.out.println("newRules: " + r);
         }
         return newRules;
     }

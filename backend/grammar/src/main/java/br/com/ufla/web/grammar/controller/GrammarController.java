@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-//import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,160 +20,104 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.ufla.web.grammar.core.Grammar;
+import br.com.ufla.web.grammar.model.AttrServ;
+import br.com.ufla.web.grammar.service.GrammarService;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "localhost:3000", "localhost:4200",
-		"https://immense-tundra-58333.herokuapp.com"})
+		"https://immense-tundra-58333.herokuapp.com", "192.168.1.102:3000"})
 @RestController
 public class GrammarController {
 
-    private Grammar[] gr = new Grammar[2];
-    private String variables;
+	@Autowired
+    private GrammarService grServ;
 
-    public void setVariables(String variables) {
-		this.variables = variables;
-	}
-    
-    public String getVariables() {
-		return variables;
-	}
-
-	public Grammar criaGramatica (String s) {
-      	
+   
+//    @GetMapping("/grammar/html")
+//    public String getHtml () {
+//        System.out.println("HTML : " + gr[1].toHtml());
+//        return gr[1].toHtml() + "\n\n" +gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
+//    }
+//    
+//    @GetMapping("/grammar")
+//    public String getGrammar () {
+//        System.out.println("grammar[1]: " + gr[1]);
+//        return gr[1].toString();
+//    }
+	
+	@ResponseBody
+    @PostMapping("/grammar/HTML")
+    public String CriaGramaticaHTML (@RequestBody AttrServ attrGCont ) {
+    	
+    	System.out.println("AttrServ: " + attrGCont.getVariables());
+    	
+    	grServ.setGramatica(attrGCont.getVariables());
+    	
+        Grammar gram = grServ.getGramatica();
+           	
+    	String stringGram =  gram.toHtml();
+    	 
+    	return stringGram;
+    }
+	
+	@ResponseBody
+	@PostMapping("/{palavra}/grammar/nonRecursiveInitial")
+	public String[] CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
 		
-        String initSym = s.split("\n")[0].split("->")[0].replace(" ", "");
-        
-        System.out.println("Simbolo Inicial: " + initSym);
-        
-        String[] listRules = s.split("\n");        
-        String[] listVariables;
-        String[] listTerminal;
-
-        Set<String> var = new LinkedHashSet<>();
-        Set<String> terminal = new LinkedHashSet<>();
-
-        for (String rule : listRules) {
-        	
-        	//aSb bb
-        	String[] temp = rule.split("->")[1].split("|");
-        	
-        	//S A
-        	var.add(String.valueOf(rule.split("->")[0].replace(" ", "")));
-        	
-        	for (String tp : temp) {
-        		for (int i = 0; i <  tp.length(); ++i) {
-                    if ((Character.isLowerCase(tp.charAt(i)))) terminal.add(String.valueOf(tp.charAt(i)));
-                }
-        	}
-        
-        }
-
-        listVariables = new String[var.size()];
-        int i = 0;
-        for (String v : var) {
-            listVariables[i] = v;
-            ++i;
-        }
-
-        listTerminal = new String[terminal.size()];
-        i = 0;
-        for (String t : terminal) {
-            listTerminal[i] = t;
-            ++i;
-        }
-        
-//        System.out.println("inicial: " + initSym);
-//        
-//        System.out.print("Termis : ");
-//        for(String t : listTerminal) {
-//        	System.out.print(t + " ");
-//        }
-//        System.out.println();
-//        
-//        System.out.print("vars : ");
-//        for(String v : listVariables) {
-//        	System.out.print(v + " ");
-//        }
-//        System.out.println();
-//      
-//        System.out.print("Rules : ");
-//        for(String r : listRules) {
-//        	System.out.print(r + " ");
-//        }
-//        System.out.println();
-
-        Grammar g = new Grammar(listVariables, listTerminal, initSym, listRules);
-
-        return g;
-    }
-
-    @GetMapping("/grammar/html")
-    public String getHtml () {
-        System.out.println("HTML : " + gr[1].toHtml());
-        return gr[1].toHtml() + "\n\n" +gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
-    }
-    
-    @GetMapping("/grammar")
-    public String getGrammar () {
-        System.out.println("grammar[1]: " + gr[1]);
-        return gr[1].toString();
-    }
+	
+	//	        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonRecursiveInitial").buildAndExpand(" ").toUri();
+	
+	//	        return ResponseEntity.created(uri).build();
+	 	return grServ.getGrammarReady(attrGCont, 1);
+	}
 
     @ResponseBody
     @PostMapping("/{palavra}/grammar/nonContracting")
-    public String[] CriaGramaticaNonContracting (@PathVariable String palavra, @RequestBody GrammarController attrGCont ) {
+    public String[] CriaGramaticaNonContracting (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
         
-    	System.out.println("nonContracting: " + attrGCont.getVariables());
-    	System.out.println(gr[0].toHtml());
     	
-    	Grammar gram = criaGramatica(attrGCont.getVariables());
-    	gr[0] = gram;
-    	gr[1] = gram.getGrammarEssentiallyNoncontracting(gram).getNewGrammar();
-    	
-    	String[] vetString = new String[3];
-    	
-		vetString[0] =  gr[0].toHtml();
-		vetString[1] =  gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
-		vetString[2] =  gr[1].toString();
     	
 //        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
 //
 //        return ResponseEntity.created(uri).build();
-		return vetString;
-    }
-
-    @ResponseBody
-    @PostMapping("/{palavra}/grammar/nonRecursiveInitial")
-    public String[] CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody GrammarController attrGCont ) {
-    	
-    	
-    	System.out.println("attrGCont.getVariables(): " + attrGCont.getVariables());
-        Grammar gram = criaGramatica(attrGCont.getVariables());
-        gr[0] = gram;
-    	gr[1] = gram.getGrammarWithInitialSymbolNotRecursive(gram).getNewGrammar();
-    	
-    	String[] vetString = new String[3];
-    	
-		 vetString[0] =  gr[0].toHtml();
-		 vetString[1] =  gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
-		 vetString[2] =  gr[1].toString();
-
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonRecursiveInitial").buildAndExpand(" ").toUri();
-
-//        return ResponseEntity.created(uri).build();
-    	 return vetString;
+    	return grServ.getGrammarReady(attrGCont, 2);
     }
     
-    @ResponseBody
-    @PostMapping("/grammar/HTML")
-    public String CriaGramaticaHTML (@RequestBody GrammarController attrGCont ) {
-    	
-        Grammar gram = criaGramatica(attrGCont.getVariables());
-           	
-    	String stringGram;
-    	
-    	stringGram =  gram.toHtml();
-    	 
-    	return stringGram;
-    }
+	@ResponseBody
+	@PostMapping("/{palavra}/grammar/nonCascade")
+	public String[] CriaGramaticaNonCascade (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
+	    
+		
+		
+	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
+	//
+	//      return ResponseEntity.created(uri).build();
+	  	return grServ.getGrammarReady(attrGCont, 3);
+	}
+
+    
+	@ResponseBody
+	@PostMapping("/{palavra}/grammar/onlyTerm")
+	public String[] CriaGramaticaOnlyTerm (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
+	    
+		
+		
+	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
+	//
+	//      return ResponseEntity.created(uri).build();
+	  	return grServ.getGrammarReady(attrGCont, 4);
+	}
+	
+	
+	@ResponseBody
+	@PostMapping("/{palavra}/grammar/onlyReach")
+	public String[] CriaGramaticaOnlyReach (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
+	    
+		
+		
+	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
+	//
+	//      return ResponseEntity.created(uri).build();
+	  	return grServ.getGrammarReady(attrGCont, 5);
+	}
 
 }

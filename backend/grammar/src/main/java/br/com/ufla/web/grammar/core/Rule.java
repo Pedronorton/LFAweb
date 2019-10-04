@@ -268,6 +268,13 @@ public class Rule implements Cloneable, Comparable<Rule> {
      * regra.
      */
     public Set<String> getSymbolsOfRightSide() {
+    	
+    	List<String> test = getListOfSymbolsOnRightSide();
+    	for (String lis : test) {
+    		System.out.println("ListRIGHT: " + lis);
+    	}
+    	
+    	
         return new HashSet<>(getListOfSymbolsOnRightSide());
     }
 

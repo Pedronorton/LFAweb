@@ -454,197 +454,241 @@ public class Grammar implements Cloneable {
 //         return rulesGenerates;
 //     }
 
-//     /**
-//      * @param g gramática livre de contexto
-//      * @return : gramática livre de contexto sem regras da cadeia
-//      */
-//     public Grammar getGrammarWithoutChainRules(final Grammar g,
-//                                                final AcademicSupport academicSupport) {
-//         Grammar gc = (Grammar) g.clone();
+    /**
+     * @param g gramática livre de contexto
+     * @return : gramática livre de contexto sem regras da cadeia
+     */
+    
+    /*    public Grammar getGrammarWithoutChainRules(final Grammar g,
+                                               final AcademicSupport academicSupport)*/
+    public AcademicSupport getGrammarWithoutChainRules(final Grammar g) {
+    	
+    	//NEW
+    	AcademicSupport academicSupport = new AcademicSupport();
+        
+    	Grammar gc = (Grammar) g.clone();
 
-//         // primeiramente, deve-se construir os subconjuntos
-//         Map<String, Set<String>> setOfChains = new LinkedHashMap<>();
-//         for (String variable : gc.getVariables()) {
-//             // conjunto que representa o chain de determinada variável
-//             Set<String> chain = new LinkedHashSet<>();
-//             Set<String> prev = new LinkedHashSet<>();
-//             Set<String> newSet;
-//             chain.add(variable);
-//             do {
-//                 newSet = GrammarParser.chainMinusPrev(chain, prev);
-//                 prev.addAll(chain);
-//                 for (String variableInNew : newSet) {
-//                     for (Rule element : gc.getRules(variableInNew)) {
-//                         if (element.getRightSide().length() == 1 &&
-//                                 Character.isUpperCase(element.getRightSide().charAt(0))) {
-//                             chain.add(element.getRightSide());
-//                             academicSupport.insertIrregularRule(element);
-//                         }
-//                     }
-//                 }
-//             } while (!chain.equals(prev));
-//             setOfChains.put(variable, chain);
-//             Set<String> setOfVariables = new LinkedHashSet<>();
-//             setOfVariables.add(variable);
-//             academicSupport.insertOnFirstSet(setOfVariables, "Chain");
-//             academicSupport.insertOnSecondSet(chain, "Chain");
-//         }
-//         // iterações sobre os conjuntos de chains
-//         Set<Rule> newSetOfRules = new LinkedHashSet<>();
-//         for (String variable : gc.getVariables()) {
-//             Set<String> chainsOfVariable = setOfChains.get(variable);
-//             for (String variableChain : chainsOfVariable) {
-//                 for (Rule element : gc.getRules()) {
-//                     if (element.getLeftSide().equals(variableChain)) {
-//                         if (element.getRightSide().length() != 1 ||
-//                                 !Character.isUpperCase(element.getRightSide().charAt(0))) {
-//                             Rule r = new Rule(variable, element.getRightSide());
-//                             newSetOfRules.add(r);
-//                             if (chainsOfVariable.size() != 1 && !gc.getRules().contains(r)) {
-//                                 academicSupport.insertNewRule(r);
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
+        // primeiramente, deve-se construir os subconjuntos
+        Map<String, Set<String>> setOfChains = new LinkedHashMap<>();
+        for (String variable : gc.getVariables()) {
+            // conjunto que representa o chain de determinada variável
+            Set<String> chain = new LinkedHashSet<>();
+            Set<String> prev = new LinkedHashSet<>();
+            Set<String> newSet;
+            chain.add(variable);
+            do {
+                newSet = GrammarParser.chainMinusPrev(chain, prev);
+                prev.addAll(chain);
+                for (String variableInNew : newSet) {
+                    for (Rule element : gc.getRules(/*variableInNew*/)) {
+                        if (element.getRightSide().length() == 1 &&
+                                Character.isUpperCase(element.getRightSide().charAt(0))) {
+                            chain.add(element.getRightSide());
+                            academicSupport.insertIrregularRule(element);
+                        }
+                    }
+                }
+            } while (!chain.equals(prev));
+            setOfChains.put(variable, chain);
+            Set<String> setOfVariables = new LinkedHashSet<>();
+            setOfVariables.add(variable);
+            academicSupport.insertOnFirstSet(setOfVariables, "Chain");
+            academicSupport.insertOnSecondSet(chain, "Chain");
+        }
+        // iterações sobre os conjuntos de chains
+        Set<Rule> newSetOfRules = new LinkedHashSet<>();
+        for (String variable : gc.getVariables()) {
+            Set<String> chainsOfVariable = setOfChains.get(variable);
+            for (String variableChain : chainsOfVariable) {
+                for (Rule element : gc.getRules()) {
+                    if (element.getLeftSide().equals(variableChain)) {
+                        if (element.getRightSide().length() != 1 ||
+                                !Character.isUpperCase(element.getRightSide().charAt(0))) {
+                            Rule r = new Rule(variable, element.getRightSide());
+                            newSetOfRules.add(r);
+                            if (chainsOfVariable.size() != 1 && !gc.getRules().contains(r)) {
+                                academicSupport.insertNewRule(r);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-//         gc.setRules(newSetOfRules);
-//         return gc;
-//     }
+        gc.setRules(newSetOfRules);
+        
+        //NEW
+        academicSupport.setNewGrammar(gc);
+        
+        return academicSupport;
+    }
 
-//     /**
-//      * @param g gramática livre de contexto
-//      * @return : gramática livre de contexto sem símbolos não terminais
-//      */
-//     public Grammar getGrammarWithoutNoTerm(final Grammar g, final AcademicSupport academicSupport) {
-//         Set<String> term = new LinkedHashSet<>();
-//         Set<String> prev = new LinkedHashSet<>();
-//         Grammar gc = (Grammar) g.clone();
+    /**
+     * @param g gramática livre de contexto
+     * @return : gramática livre de contexto sem símbolos não terminais
+     */
+    
+    //public Grammar getGrammarWithoutNoTerm(final Grammar g, final AcademicSupport academicSupport) {
+    
+    public AcademicSupport getGrammarWithoutNoTerm(final Grammar g) {
+    	
+    	//NEW
+    	AcademicSupport academicSupport = new AcademicSupport();
+    	
+        Set<String> term = new LinkedHashSet<>();
+        Set<String> prev = new LinkedHashSet<>();
+        Grammar gc = (Grammar) g.clone();
 
-//         // preenche conjunto term com as variáveis que geram terminais
-//         for (String var : gc.variables) {
-//             for (Rule rule : gc.getRules(var)) {
-//                 String rightSide = rule.getRightSide();
-//                 int N = rightSide.length();
-//                 boolean isTerm = true;
-//                 for (int i = 0; i < N; i++) {
-//                     if (!Character.isLowerCase(rightSide.charAt(i))) {
-//                         isTerm = false;
-//                         break;
-//                     }
-//                 }
-//                 if (isTerm) {
-//                     term.add(rule.getLeftSide());
-//                     break;
-//                 }
-//             }
-//         }
+        // preenche conjunto term com as variáveis que geram terminais
+        for (String var : gc.variables) {
+            for (Rule rule : gc.getRules(/*var*/)) {
+                String rightSide = rule.getRightSide();
+                int N = rightSide.length();
+                boolean isTerm = true;
+                for (int i = 0; i < N; i++) {
+                    if (!Character.isLowerCase(rightSide.charAt(i))) {
+                        isTerm = false;
+                        break;
+                    }
+                }
+                if (isTerm) {
+                    term.add(rule.getLeftSide());
+                    break;
+                }
+            }
+        }
 
-//         academicSupport.insertOnFirstSet(term, "TERM");
-//         academicSupport.insertOnSecondSet(prev, "TERM");
-//         do {
-//             prev.addAll(term);
-//             for (String var : gc.variables) {
-//                 if (term.contains(var)) {
-//                     continue;
-//                 }
-//                 boolean varAdd = false;
-//                 for (Rule rule : gc.getRules(var)) {
-//                     boolean isTerm = true;
-//                     for (String symbol : rule.getSymbolsOfRightSide()) {
-//                         if (!Character.isLowerCase(symbol.charAt(0)) && !term.contains(symbol)) {
-//                             isTerm = false;
-//                             break;
-//                         }
-//                     }
-//                     if (isTerm) {
-//                         term.add(var);
-//                         break;
-//                     }
-//                 }
-//             }
-//             academicSupport.insertOnFirstSet(term, "TERM");
-//             academicSupport.insertOnSecondSet(prev, "TERM");
-//         } while (!term.equals(prev));
-//         if (term.size() != gc.getVariables().size()) {
-//             academicSupport.setSituation(true);
-//         } else {
-//             academicSupport.setSituation(false);
-//         }
+        academicSupport.insertOnFirstSet(term, "TERM");
+        academicSupport.insertOnSecondSet(prev, "TERM");
+        do {
+            prev.addAll(term);
+            for (String var : gc.variables) {
+                if (term.contains(var)) {
+                    continue;
+                }
+                boolean varAdd = false;
+            
+                for (Rule rule : gc.getRules(/*var*/)) {
+                	
+                    
+                	//New condition
+                	if (!rule.getLeftSide().equals(var)) {
+                		continue;
+                	}
+                	
+            		boolean isTerm = true;
+                    
+                    for (String symbol : rule.getSymbolsOfRightSide()) {
+                    	
+                        if (!Character.isLowerCase(symbol.charAt(0)) && !term.contains(symbol)	) {
+                        	
+                        	isTerm = false;
+                            break;
+                        }
+                    }
+                    if (isTerm) {
+                        term.add(var);
+                        break;
+                    }
+                		
+                	
+                }
+            }
+            academicSupport.insertOnFirstSet(term, "TERM");
+            academicSupport.insertOnSecondSet(prev, "TERM");
+        } while (!term.equals(prev));
+        if (term.size() != gc.getVariables().size()) {
+            academicSupport.setSituation(true);
+        } else {
+            academicSupport.setSituation(false);
+        }
 
-//         gc.variables.retainAll(prev);
-//         gc.setRules(GrammarParser.updateRules(prev, gc, academicSupport));
-//         gc.updateTerminals();
-//         return gc;
-//     }
+        gc.variables.retainAll(prev);
+        gc.setRules(GrammarParser.updateRules(prev, gc, academicSupport));
+        
+        gc.updateTerminals();
+        
+        //NEW
+        academicSupport.setNewGrammar(gc);
+        return academicSupport;
+        
+//        return gc;
+    }
 
-//     private boolean termInUse(String term) {
-//         for (Rule rule : rules) {
-//             if (rule.useTerm(term)) {
-//                 return true;
-//             }
-//         }
-//         return false;
-//     }
+    private boolean termInUse(String term) {
+        for (Rule rule : rules) {
+            if (rule.useTerm(term)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-//     private void updateTerminals() {
-//         Set<String> noMoreTerms = new HashSet<>();
-//         for (String term : terminals) {
-//             if (!termInUse(term)) {
-//                 noMoreTerms.add(term);
-//             }
-//         }
-//         terminals.removeAll(noMoreTerms);
-//     }
+    private void updateTerminals() {
+        Set<String> noMoreTerms = new HashSet<>();
+        for (String term : terminals) {
+            if (!termInUse(term)) {
+                noMoreTerms.add(term);
+            }
+        }
+        terminals.removeAll(noMoreTerms);
+    }
 
-//     /**
-//      * @param g gramática livre de contexto
-//      * @return : gramática livre de contexto sem símbolos não alcançáveis
-//      */
-//     public Grammar getGrammarWithoutNoReach(final Grammar g, final AcademicSupport academicSupport) {
-//         Set<String> reach = new LinkedHashSet<>();
-//         Set<String> prev = new LinkedHashSet<>();
-//         Set<String> newSet = new LinkedHashSet<>();
-//         Grammar gc = (Grammar) g.clone();
-//         reach.add(gc.getInitialSymbol());
-//         newSet.add(gc.getInitialSymbol());
-//         academicSupport.insertOnFirstSet(reach, "REACH");
-//         academicSupport.insertOnSecondSet(prev, "REACH");
-//         academicSupport.insertOnThirdSet(newSet, "REACH");
-//         academicSupport.setSituation(true);
-//         do {
-//             prev.addAll(reach);
-//             for (String element : newSet) {
-//                 for (Rule secondElement : gc.getRules()) {
-//                     if (secondElement.getLeftSide().equals(element)) {
-//                         reach.addAll(GrammarParser.variablesInW(reach, secondElement.getRightSide()));
-//                     }
-//                 }
-//             }
-//             newSet = GrammarParser.reachMinusPrev(reach, prev);
-//             academicSupport.insertOnFirstSet(reach, "REACH");
-//             academicSupport.insertOnSecondSet(prev, "REACH");
-//             academicSupport.insertOnThirdSet(newSet, "REACH");
-//         } while (!reach.equals(prev));
-//         gc.variables.retainAll(prev);
-//         gc.setRules(GrammarParser.updateRules(prev, gc, academicSupport));
-//         gc.updateTerminals();
-//         return gc;
-//     }
+    /**
+     * @param g gramática livre de contexto
+     * @return : gramática livre de contexto sem símbolos não alcançáveis
+     */
+    public AcademicSupport getGrammarWithoutNoReach(final Grammar g) {
+    	
+    	AcademicSupport academicSupport = new AcademicSupport(); //New
+    	
+        Set<String> reach = new LinkedHashSet<>();
+        Set<String> prev = new LinkedHashSet<>();
+        Set<String> newSet = new LinkedHashSet<>();
+        Grammar gc = (Grammar) g.clone();
+        reach.add(gc.getInitialSymbol());
+        newSet.add(gc.getInitialSymbol());
+        academicSupport.insertOnFirstSet(reach, "REACH");
+        academicSupport.insertOnSecondSet(prev, "REACH");
+        academicSupport.insertOnThirdSet(newSet, "REACH");
+        academicSupport.setSituation(true);
+        do {
+            prev.addAll(reach);
+            for (String element : newSet) {
+                for (Rule secondElement : gc.getRules()) {
+                    if (secondElement.getLeftSide().equals(element)) {
+                        reach.addAll(GrammarParser.variablesInW(reach, secondElement.getRightSide()));
+                    }
+                }
+            }
+            newSet = GrammarParser.reachMinusPrev(reach, prev);
+            academicSupport.insertOnFirstSet(reach, "REACH");
+            academicSupport.insertOnSecondSet(prev, "REACH");
+            academicSupport.insertOnThirdSet(newSet, "REACH");
+        } while (!reach.equals(prev));
+        gc.variables.retainAll(prev);
+        gc.setRules(GrammarParser.updateRules(prev, gc, academicSupport));
+        gc.updateTerminals();
+        
+        
+        academicSupport.setNewGrammar(gc);
+        return academicSupport;
+        
+//        return gc;
+    }
 
 
-//     public Map<String, Rule> rulesProducesOnlyOneTerminal() {
-//         Map<String, Rule> rulesProdOOneTerm = new LinkedHashMap<>();
-//         Map<String, Set<String>> rulesMapLeftToRight = getRulesMapLeftToRight();
-//         for (Rule rule : rules) {
-//             if (rule.producesOnlyOneTerminal() &&
-//                     rulesMapLeftToRight.get(rule.getLeftSide()).size() == 1) {
-//                 rulesProdOOneTerm.put(rule.getRightSide(), rule);
-//             }
-//         }
-//         return rulesProdOOneTerm;
-//     }
+//    public Map<String, Rule> rulesProducesOnlyOneTerminal() {
+//        Map<String, Rule> rulesProdOOneTerm = new LinkedHashMap<>();
+//        Map<String, Set<String>> rulesMapLeftToRight = getRulesMapLeftToRight();
+//        for (Rule rule : rules) {
+//            if (rule.producesOnlyOneTerminal() &&
+//                    rulesMapLeftToRight.get(rule.getLeftSide()).size() == 1) {
+//                rulesProdOOneTerm.put(rule.getRightSide(), rule);
+//            }
+//        }
+//        return rulesProdOOneTerm;
+//    }
 
 //     public Map<String, Rule> rulesProducesOnlyOneBinaryRightSide() {
 //         Map<String, Rule> rulesProdOOneBRightSide = new LinkedHashMap<>();

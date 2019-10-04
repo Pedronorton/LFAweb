@@ -11,7 +11,21 @@ class Main extends Component {
         this.state = {
             palavra: "",
             variables: "",
-            varHTML: "",
+            vari: {
+                varHTML: "",
+                varNRIS: "",
+                varENC: "",
+                varNC: "",
+                varOT: "",
+                varOR: "",
+            },
+            display: {
+                displayNRIS: false,
+                displayENC: false,
+                displayNC: false,
+                displayOT: false,
+                displayOR: false
+            },
             historico: null
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -102,11 +116,12 @@ class Main extends Component {
                     // );
                     // this.setState({variables: response.data[2]});
 
-                    this.setState({varHTML: <div>
-                    <div dangerouslySetInnerHTML={{__html: response.data[0]}} /> <br/>
+                    this.setState({varNRIS: <div> <br/>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}} />  */}
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>});
                 }
             ).then(_ => this.props.history.push(`/`));
+
     }
 
 
@@ -136,8 +151,9 @@ class Main extends Component {
                     // );
                     // this.setState({variables: response.data[2]});
 
-                    this.setState({varHTML: <div>
-                    <div dangerouslySetInnerHTML={{__html: response.data[0]}} /> <br/>
+                    this.setState({varENC: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}} />  */}
+                    <br/>
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>});
                 }
             ).then(_ => this.props.history.push(`/`));
@@ -155,8 +171,9 @@ class Main extends Component {
                     console.log("Non Cascade: " + response.data);
                     
                     // this.setState({variables: response.data[2]});
-                    this.setState({varHTML: <div>
-                        <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+                    this.setState({varNC: <div>
+                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                        <br/>
                         <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
                     </div>});
                 }
@@ -164,7 +181,7 @@ class Main extends Component {
         }
         
         onSubmitOnlyTerm (values) {
-            console.log("Only TERM: " + values);
+            console.log("Only TERM values: " + values);
             let dados ={
                 palavra: values.palavra,
                 variables: values.variables
@@ -173,10 +190,11 @@ class Main extends Component {
             DataService.criaOnlyTerm(dados).then(
                 response => {
                     console.log("Only TERM: " + response.data);
-                    
+    
                     // this.setState({variables: response.data[2]});
-                    this.setState({varHTML: <div>
-                        <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+                    this.setState({varOT: <div>
+                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                        <br/>
                         <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
                     </div>});
                 }
@@ -195,12 +213,13 @@ class Main extends Component {
                     console.log("Only REACH: " + response.data);
                     
                     // this.setState({variables: response.data[2]});
-                    this.setState({varHTML: <div>
-                        <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> <br/>
+                    this.setState({varOR: <div>
+                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                        <br/>
                         <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
                     </div>});
                 }
-            )
+            );
         }
     
     componentDidMount () {
@@ -269,39 +288,49 @@ class Main extends Component {
                 </React.Fragment>
             );
         } else {
-            console.log("II : " + this.state.varHTML);
+            
             return(
                 <React.Fragment>
                     {this.state.varHTML}
-                    <section className="container grid grid-template-columns-1">
+                    <div id="main2" className="conteudo grid grid-template-columns-1">
                         
                         <div className = "item">
                             <button type = "button" className = "btn btn-primary btn-m" onClick={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>Initial non recursive</button>
+                            <div id="one">
+                                {this.state.varNRIS}
+                            </div>
                         </div>
 
                         <div className="item">
                             <button type="button" className="btn btn-primary btn-m" onClick={_ => this.onSubmitNonContracting(this.state)}>Essentially non contractile</button>
+                            {this.state.varENC}
                         </div>
-                                                
-                                                <div className="item">
-                                                    <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitNonCascade(this.state)}>No cascade</button>
-                                                </div>
-                                                
-                                                <div className="item">
-                                                    <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyTerm(this.state)}>Only terminals</button>
-                                                </div>
                         
-                                                <div className="item">
-                                                    <button type="button" className="btn btn-primary btn-m" onclick={_ =>this.onSubmitOnlyReach(this.state)}>Only reacheable</button>
-                                                </div>
-                                                
-                        <div className = "item">
+                        <div className="item">
+                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitNonCascade(this.state)}>No cascade</button>
+                            {this.state.varNC}
+                        </div>
+                        
+                        <div className="item">
+                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyTerm(this.state)}>Only terminals</button>
+                            <div id="one">
+                                {this.state.varOT}
+                            </div>
+                        </div>
+                        
+                        <div className="item">
+                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyReach(this.state)}>Only reacheable</button>
+                            {this.state.varOR}
+                        </div>
+                        
+                        {/* <div className = "item">
                             <button type = "button" className = "btn btn-primary btn-m" onClick={this.historicoFunction}>Histórico</button>
                         </div>
                         <div className = "item">
                             <button type = "button" className = "btn btn-primary btn-m" onClick={this.informacoesFunction}><span className="fa fa-exclamation-circle"></span></button>
-                        </div>
-                    </section>
+                        </div> */}
+
+                    </div>
                 </React.Fragment>
             );
         }
