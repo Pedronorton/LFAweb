@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import br.com.ufla.web.grammar.model.Rditto;
+
 //import javax.persistence.Entity;
 //import javax.persistence.Table;
 
@@ -184,59 +186,58 @@ public class Grammar implements Cloneable {
     	
         Grammar gc = (Grammar) g.clone();
         AcademicSupport academicSupport = new AcademicSupport();
-        // String align = "justify";
-        // String comments =
-        //         new StringBuilder("<p align=")
-        //                 .append(align)
-        //                 .append('>')
-        //                 .append(getString(R.string.initial_symbol_not_recursive))
-        //                 .append(gc.getInitialSymbol())
-        //                 .append(" ⇒<sup>∗</sup> αSβ.<br><br>")
-        //                 .toString();
+		String align = "justify";
+		String comments =
+		         new StringBuilder("<p align=")
+		                 .append(align)
+		                 .append('>')
+		                 .append( Rditto.initial_symbol_not_recursive() )
+		                 .append(gc.getInitialSymbol())
+		                 .append(" ⇒<sup>∗</sup> αSβ.<br><br>")
+                     .toString();
         Map<Integer, String> problems = new LinkedHashMap<>();
         String initialSymbol = gc.getInitialSymbol();
         boolean insert = false;
-        //int counter = 1;
-        //final String recursionFound = getString(R.string.recursion_found_initial);
+        int counter = 1;
+        final String recursionFound = Rditto.recursion_found_initial();
         for (Rule rule : gc.getRules()) {
             if (rule.getRightSide().contains(initialSymbol)) {
                 insert = true;
-                // problems.put(counter, recursionFound + ": " + rule.getLeftSide() +
-                //         " → " + rule.getRightSide() + "\n");
-                //counter++;
+                 problems.put(counter, recursionFound + ": " + rule.getLeftSide() +
+                         " → " + rule.getRightSide() + "\n");
+                counter++;
             }
         }
         boolean situation;
-        // StringBuilder solutionDescription = new StringBuilder();
+        StringBuilder solutionDescription = new StringBuilder();
 
-        // final String[] parameters =
-        //         getString(
-        //                 R.string.recursion_initial_symbol_solution_descr_parameters
-        //         ).split("#");
+        final String[] parameters =           
+                       Rditto.recursion_initial_symbol_solution_descr_parameters()
+                 .split("#");
         if (insert) {
             situation = true;
             String newInitialSymbol = initialSymbol + "'";
-            // solutionDescription
-            //         .append(parameters[0])
-            //         .append("G = (V, Σ, P, ")
-            //         .append(initialSymbol)
-            //         .append(')')
-            //         .append(parameters[1])
-            //         .append(initialSymbol)
-            //         .append(parameters[2])
-            //         .append("G' = (V ∪ {")
-            //         .append(newInitialSymbol)
-            //         .append("}, Σ, P ∪ {")
-            //         .append(newInitialSymbol)
-            //         .append(" → ")
-            //         .append(initialSymbol)
-            //         .append("}, ")
-            //         .append(newInitialSymbol)
-            //         .append("),")
-            //         .append(parameters[3])
-            //         .append(initialSymbol)
-            //         .append(parameters[4])
-            //         .append("</p><br>");
+            solutionDescription
+                     .append(parameters[0])
+                     .append("G = (V, Σ, P, ")
+                     .append(initialSymbol)
+                     .append(')')
+                     .append(parameters[1])
+                     .append(initialSymbol)
+                     .append(parameters[2])
+                     .append("G' = (V ∪ {")
+                     .append(newInitialSymbol)
+                     .append("}, Σ, P ∪ {")
+                     .append(newInitialSymbol)
+                     .append(" → ")
+                     .append(initialSymbol)
+                     .append("}, ")
+                     .append(newInitialSymbol)
+                     .append("),")
+                     .append(parameters[3])
+                     .append(initialSymbol)
+                     .append(parameters[4])
+                     .append("</p><br>");
             gc.insertVariable(newInitialSymbol);
             gc.setInitialSymbol(newInitialSymbol);
             Rule r = new Rule(newInitialSymbol, initialSymbol);
@@ -248,12 +249,12 @@ public class Grammar implements Cloneable {
         }
 
         //seta feedback acadêmico no objeto
-        //academicSupport.setComments(comments);
+        academicSupport.setComments(comments);
         academicSupport.setFoundProblems(problems);
         academicSupport.setResult(gc);
         academicSupport.setNewGrammar(gc);
         academicSupport.setSituation(situation);
-        //academicSupport.setSolutionDescription(solutionDescription.toString());
+        academicSupport.setSolutionDescription(solutionDescription.toString());
         return academicSupport;
     }
 
@@ -278,11 +279,10 @@ public class Grammar implements Cloneable {
 
         // nullable = nullable U A -> . | A E V
         Map<Integer, String> foundProblems = new LinkedHashMap<>();
-        //int counter = 1;
-        // final String[] parameters =
-        //         getString(
-        //                 R.string.esentially_noncontracting_problems_parameters
-        //         ).split("#");
+        int counter = 1;
+         final String[] parameters =                
+                         Rditto.esentially_noncontracting_problems_parameters()
+                 .split("#");
         for (Rule element : gc.getRules()) {
             if (element.getRightSide().equals(LAMBDA)) {
                 nullable.add(element.getLeftSide());
@@ -290,11 +290,11 @@ public class Grammar implements Cloneable {
                 if (!element.getLeftSide().equals(gc.getInitialSymbol())) {
                     academicSupport.insertIrregularRule(element);
                 }
-//                foundProblems.put(counter, new StringBuilder(parameters[0])
-//                        .append(element)
-//                        .append(parameters[1])
-//                        .toString());
-//                counter++;
+                foundProblems.put(counter, new StringBuilder(parameters[0])
+                        .append(element)
+                        .append(parameters[1])
+                        .toString());
+                counter++;
             } else {
                 Rule r = new Rule(element.getLeftSide(), element.getRightSide());
                 setOfRules.add(r);
@@ -1590,7 +1590,7 @@ public class Grammar implements Cloneable {
      
      
     public String toHtml() {
-        String varStr = "Variáveis: #Terminais: #Símbolo inicial: # Regras:";
+        String varStr = Rditto.grammar_to_string_parameters();
         final String[] parameters = varStr.split("#");
         StringBuilder sb = new StringBuilder()
                 .append(HtmlTags.BOLD_OPEN)

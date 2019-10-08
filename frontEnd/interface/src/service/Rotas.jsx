@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import Interface from "../interface/Interface";
-// import User from "../interface/User";
+import Test from "../interface/Test";
 
 class Rotas extends Component {
 
@@ -11,7 +11,7 @@ class Rotas extends Component {
                 <>
                     <Switch>
                         <Route path="/" exact component={Interface}/>
-                        {/* <Route path="/grammar" exact component={User}/> */}
+                        <Route path="/test" exact component={Test}/>
                     </Switch>
                 </>
             </Router>

@@ -25,7 +25,10 @@
 .item {
     margin-bottom: 5px;
     text-align: center;
-    font-size: 1.5em;
+    font-size: 15px;
+    float: left;
+    width: 100%;
+    font-weight: bold;
 }
 .subgrid > div {
     background: rgba(0,0,0,.3);
@@ -52,19 +55,24 @@
     transform: rotate(180deg);
 }
 
-#main2 div:nth-of-type(1) {flex-grow: 1;}
-#main2 div:nth-of-type(2) {flex-grow: 3;}
-#main2 div:nth-of-type(3) {flex-grow: 1;}
-#main2 div:nth-of-type(4) {flex-grow: 1;}
-#main2 div:nth-of-type(5) {flex-grow: 1;}
-
-
 .conteudo {
     width: 100%;
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
     margin-left: auto;
-    display: grid;
-    grid-template-columns: 2fr 2fr 2fr 2fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 20px;
+}
+
+.Accordion {
+    border-radius: 10px;
+}
+
+  .Accordion__header { 
+    font-family: font-bold, Arial; 
+    border: 1px groove;
+    box-shadow: 1px 1px 1px black;
+    background: #353131;
+    font-size: small;
 }

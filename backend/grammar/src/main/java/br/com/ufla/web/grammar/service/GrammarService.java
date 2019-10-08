@@ -11,7 +11,7 @@ import br.com.ufla.web.grammar.model.AttrServ;
 @Service
 public class GrammarService {
 	
-	private  Grammar gr;
+	private Grammar gr;
 //    private  String variables;
 
 //    public void setVariables(String variables) {
@@ -46,12 +46,19 @@ public class GrammarService {
         	//aSb bb
         	String[] temp = rule.split("->")[1].split("|");
         	
+        	for (String tp : temp) {
+        		System.out.println("terminais: " + tp);
+        	}
+        	
         	//S A
         	var.add(String.valueOf(rule.split("->")[0].replace(" ", "")));
         	
         	for (String tp : temp) {
         		for (int i = 0; i <  tp.length(); ++i) {
-                    if ((Character.isLowerCase(tp.charAt(i)))) terminal.add(String.valueOf(tp.charAt(i)));
+                    if ( (Character.isLowerCase(tp.charAt(i)) ) ) 
+                    	terminal.add(String.valueOf(tp.charAt(i)));
+                    else if (tp.charAt(i) == '|')
+                    	terminal.add(String.valueOf("λ"));
                 }
         	}
         

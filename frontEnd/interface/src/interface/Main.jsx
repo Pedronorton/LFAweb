@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import DataService from "../service/DataService";
 import { withRouter } from "react-router-dom";
 
+import Accordion from "react-collapsy";
+import "../../node_modules/react-collapsy/lib/index.css";
+
 import './css/Main.css';
 
 class Main extends Component {
@@ -19,6 +22,18 @@ class Main extends Component {
                 varOT: "",
                 varOR: "",
             },
+            index : 0,
+            displayLang: {
+                lWord : ["Word","Palavra"],
+                lDescription : ["If you want to verify acceptances and derivations","Se você quiser verificar aceitações e derivações"],
+                lGrammar : ["Grammar","Gramática"],
+                lSubmit : ["Submit","Submeter"],
+                lInitialNonRec : ["Initial non recursive","Inicial não recusivo"],
+                lEsseniallyNonContract : ["Essentially non contractile","Essencialmente não contrátil"],
+                lNonCascade : ["No cascade","Sem cascata"],
+                lOnlyTerm : ["Only terminals","Apenas terminais"],
+                lOnlyReach : ["Only reacheable","Apenas alcançáveis"]
+            },
             display: {
                 displayNRIS: false,
                 displayENC: false,
@@ -26,6 +41,7 @@ class Main extends Component {
                 displayOT: false,
                 displayOR: false
             },
+            lang: "en",
             historico: null
         };
         this.onSubmit = this.onSubmit.bind(this);
@@ -35,12 +51,12 @@ class Main extends Component {
     lambdaFunction() {
         document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" λ ";
     }
-    pipeFunction() {
-        document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" | ";
-    }
-    arrowFunction() {
-        document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" -> ";
-    }
+    // pipeFunction() {
+    //     document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" | ";
+    // }
+    // arrowFunction() {
+    //     document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" -> ";
+    // }
     limparFunction() {
         document.getElementById("grammar-text").value="";
     }
@@ -57,11 +73,18 @@ class Main extends Component {
     
     onSubmit (values) {
 
+        if (values.palavra === "") {
+            values.palavra = "a";
+        }
+        
         let dados = {
             palavra: values.palavra,
             variables: values.variables,
-            historico: values.variables
+            historico: values.variables,
+            lang: this.state.lang
         };
+
+        console.log("Variables : " + dados.variables);
 
         this.setState({variables: dados.variables});
         
@@ -145,6 +168,7 @@ class Main extends Component {
                 response => {
                     console.log("Non Contracting: " + response.data);
                     
+
                     // this.state.historico.push(
                     //     "palavra : " + dados.palavra + "\n" +
                     //     "Gramática : " + dados.variables + "\n"
@@ -223,27 +247,33 @@ class Main extends Component {
         }
     
     componentDidMount () {
-        if (this.state.palavra !== "") {
-            DataService.getGramatica()
-                .then(
-                    response => {
-                        console.log(response);
-                        this.state.historico.push("Gramática: " + response.data + "\n");
-                        // this.setState({variables: response.data});
-                    }
-                );
-            DataService.getGramaticaHTML()
-                .then(
-                    response => {
-                        console.log(response.data);
-                        this.setState({varHTML: response.data});
-                    }
-                );
-            this.props.history.push(`/`);
+        let lang = navigator.languages;
+        if (lang.includes("pt")) {
+            this.setState({lang: "pt"});
+            this.setState({index: 1});
         }
+        // if (this.state.palavra !== "") {
+        //     DataService.getGramatica()
+        //         .then(
+        //             response => {
+        //                 console.log(response);
+        //                 this.state.historico.push("Gramática: " + response.data + "\n");
+        //                 // this.setState({variables: response.data});
+        //             }
+        //         );
+        //     DataService.getGramaticaHTML()
+        //         .then(
+        //             response => {
+        //                 console.log(response.data);
+        //                 this.setState({varHTML: response.data});
+        //             }
+        //         );
+        //     this.props.history.push(`/`);
+        // }
     }
     
     render() {
+
         if (!this.state.historico) {
             console.log("AQUI !!!");
             return (
@@ -251,37 +281,32 @@ class Main extends Component {
                     <div className="row">
                         <div className="col-12 col-sm-7" id="text-area">
                             <div className="palavra">
-                                <>Word: <input name="palavra" className="campo" value={this.state.palavra} 
+                                <>{this.state.displayLang.lWord[this.state.index]}: <input name="palavra" className="campo" value={this.state.palavra} 
                                 onChange={event => this.setState({palavra : event.target.value})} /></> <br/>
-                                <i className="descricao">If you want to verify acceptances and derivations</i>
+                                <i className="descricao">{this.state.displayLang.lDescription[this.state.index]}</i>
                             </div>
                             <div className="gramatica">
                                 <p>
-                                    Grammar: <textarea name="gramatica" className="campo" id="grammar-text" value={this.state.variables} 
+                                    {this.state.displayLang.lGrammar[this.state.index]}: <textarea name="gramatica" className="campo" id="grammar-text" value={this.state.variables} 
                                     onChange={event => this.setState({variables : event.target.value})} />
                                 </p>
                             </div>
-                            <div>
-                                <br/>
-                                <button type="button" className="btn btn-primary btn-m" id="ok" onClick={_ => this.onSubmit(this.state)}>Submeter</button>
-                            </div>
+                            
                         </div>
                         <div className="col-12 col-lg-3 col-md-4 col-sm-5">
                             <section className="container grid grid-template-columns-1">
-                                <div className = "item subgrid">
-                                    <button type = "button" className = "btn btn-primary btn-s" onClick={this.lambdaFunction}><b id="lambda">λ</b></button>
-                                    <button type = "button" className = "btn btn-primary btn-s" onClick={this.pipeFunction}>|</button>
-                                    <button type = "button" className = "btn btn-primary btn-s" onClick={this.arrowFunction}>-></button>
-                                </div>
                                 <div className = "item">
-                                    <button type = "button" className = "btn btn-primary btn-m" onClick={this.limparFunction}>Limpar</button>
+                                    <button type = "button" className = "btn btn-primary btn-m" onClick={this.lambdaFunction}><b id="lambda">λ</b></button>
+                                    {/* <button type = "button" className = "btn btn-primary btn-s" onClick={this.pipeFunction}>|</button>
+                                    <button type = "button" className = "btn btn-primary btn-s" onClick={this.arrowFunction}>-></button> */}
                                 </div>
-                                <div className = "item">
+                                <div classNam="item">
+                                    <button type="button" className="btn btn-primary btn-m btn-b" id="ok" onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
+                                </div>
+                                {/* <div className = "item">
                                     <button type = "button" className = "btn btn-primary btn-m" onClick={this.historicoFunction}>Histórico</button>
-                                </div>
-                                <div className = "item">
-                                    <button type = "button" className = "btn btn-primary btn-m" onClick={this.informacoesFunction}><span className="fa fa-exclamation-circle"></span></button>
-                                </div>
+                                </div> */}
+                               
                             </section>
                         </div>
                     </div>
@@ -292,35 +317,60 @@ class Main extends Component {
             return(
                 <React.Fragment>
                     {this.state.varHTML}
-                    <div id="main2" className="conteudo grid grid-template-columns-1">
+                    <div className="container grid grid-template-columns-1 conteudo">
                         
-                        <div className = "item">
-                            <button type = "button" className = "btn btn-primary btn-m" onClick={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>Initial non recursive</button>
-                            <div id="one">
-                                {this.state.varNRIS}
-                            </div>
+                        <div className="item">
+                            <Accordion 
+                                title={this.state.displayLang.lInitialNonRec[this.state.index]}
+                                onToggle={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>
+                                    {this.state.varNRIS}
+                            </Accordion>
+                            {/* <button type="button" className="btn btn-primary btn-m" onClick={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>Initial non recursive</button>
+                            {this.state.varNRIS} */}
                         </div>
 
                         <div className="item">
-                            <button type="button" className="btn btn-primary btn-m" onClick={_ => this.onSubmitNonContracting(this.state)}>Essentially non contractile</button>
-                            {this.state.varENC}
+                        <Accordion 
+                            title={this.state.displayLang.lEsseniallyNonContract[this.state.index]}
+                            onToggle={_ => this.onSubmitNonContracting(this.state)}>
+                                {this.state.varENC}
+                        </Accordion>
+                            {/* <button type="button" className="btn btn-primary btn-m" onClick={_ => this.onSubmitNonContracting(this.state)}>Essentially non contractile</button>
+                            {this.state.varENC} */}
                         </div>
                         
                         <div className="item">
-                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitNonCascade(this.state)}>No cascade</button>
-                            {this.state.varNC}
+                            <Accordion 
+                                title={this.state.displayLang.lNonCascade[this.state.index]}
+                                onToggle={_ =>this.onSubmitNonCascade(this.state)}>
+                                    {this.state.varNC}
+                            </Accordion>
+                            {/* <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitNonCascade(this.state)}>No cascade</button>
+                            {this.state.varNC} */}
                         </div>
-                        
+                    </div>
+                    <div className="container grid grid-template-columns-1 conteudo">
                         <div className="item">
-                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyTerm(this.state)}>Only terminals</button>
+                            <Accordion 
+                                title={this.state.displayLang.lOnlyTerm[this.state.index]}
+                                onToggle={_ =>this.onSubmitOnlyTerm(this.state)}>
+                                    {this.state.varOT}
+                            </Accordion>
+                            {/* <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyTerm(this.state)}>Only terminals</button>
                             <div id="one">
                                 {this.state.varOT}
-                            </div>
+                            </div> */}
                         </div>
                         
                         <div className="item">
-                            <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyReach(this.state)}>Only reacheable</button>
-                            {this.state.varOR}
+                            <Accordion 
+                                title={this.state.displayLang.lOnlyReach[this.state.index]}
+                                onToggle={_ =>this.onSubmitOnlyReach(this.state)}>
+                                    {this.state.varOR}
+                            </Accordion>
+
+                            {/* <button type="button" className="btn btn-primary btn-m" onClick={_ =>this.onSubmitOnlyReach(this.state)}>Only reacheable</button>
+                            {this.state.varOR} */}
                         </div>
                         
                         {/* <div className = "item">

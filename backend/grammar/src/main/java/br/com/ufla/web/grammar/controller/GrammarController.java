@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.ufla.web.grammar.core.Grammar;
 import br.com.ufla.web.grammar.model.AttrServ;
+import br.com.ufla.web.grammar.model.Rditto;
 import br.com.ufla.web.grammar.service.GrammarService;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "localhost:3000", "localhost:4200",
