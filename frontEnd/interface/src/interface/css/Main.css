@@ -2,7 +2,7 @@
     margin-top: 3%;
 }
 #text-area{
-    text-align: right;
+    text-align: left;
     padding-right: 5%;
     padding-left:5%;
 }
@@ -14,7 +14,10 @@
     padding-bottom: 1em;
 }
 .campo{
-    max-width: 20em;
+    width: 100%;
+}
+.gramatica {
+    height: 14em;
 }
 .btn-m {
     min-width: 10em;
@@ -45,7 +48,7 @@
     padding-right: 15em;
 }
 .row{
-    margin-top: 6em;
+    margin-top: 2em;
     font-size: 1.5em;
 }
 #ok{
@@ -59,8 +62,6 @@
     width: 100%;
     padding-right: 15px;
     padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
     grid-template-columns: 1fr 1fr 1fr;
     grid-column-gap: 20px;
 }
@@ -75,4 +76,8 @@
     box-shadow: 1px 1px 1px black;
     background: #353131;
     font-size: small;
+}
+
+.submit-div {
+    padding-left: 0;
 }

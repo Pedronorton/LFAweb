@@ -46,10 +46,11 @@ class Main extends Component {
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.onSubmitNonRecursiveInitialSymbol = this.onSubmitNonRecursiveInitialSymbol.bind(this);
+        this.lambdaFunction = this.lambdaFunction.bind(this);
     }
     
     lambdaFunction() {
-        document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" λ ";
+        this.setState( {variables : this.state.variables+" λ " } );
     }
     // pipeFunction() {
     //     document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" | ";
@@ -57,9 +58,9 @@ class Main extends Component {
     // arrowFunction() {
     //     document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" -> ";
     // }
-    limparFunction() {
-        document.getElementById("grammar-text").value="";
-    }
+    // limparFunction() {
+    //     document.getElementById("grammar-text").value="";
+    // }
     historicoFunction() {
         try {
             alert(this.state.historico[0] + "\n" + this.state.historico[1]);
@@ -280,28 +281,30 @@ class Main extends Component {
                 <React.Fragment>
                     <div className="row">
                         <div className="col-12 col-sm-7" id="text-area">
-                            <div className="palavra">
-                                <>{this.state.displayLang.lWord[this.state.index]}: <input name="palavra" className="campo" value={this.state.palavra} 
-                                onChange={event => this.setState({palavra : event.target.value})} /></> <br/>
-                                <i className="descricao">{this.state.displayLang.lDescription[this.state.index]}</i>
-                            </div>
                             <div className="gramatica">
                                 <p>
-                                    {this.state.displayLang.lGrammar[this.state.index]}: <textarea name="gramatica" className="campo" id="grammar-text" value={this.state.variables} 
+                                    {this.state.displayLang.lGrammar[this.state.index]}: <br/>
+                                    <textarea name="gramatica" className="campo gramatica" id="grammar-text" value={this.state.variables} 
                                     onChange={event => this.setState({variables : event.target.value})} />
                                 </p>
+                                
                             </div>
-                            
+                            <br/>
+                            <div className="palavra">
+                                <p><input placeholder={this.state.displayLang.lWord[this.state.index] + " (" + this.state.displayLang.lDescription[this.state.index]+")" }
+                                name="palavra" className="campo" value={this.state.palavra} 
+                                onChange={event => this.setState({palavra : event.target.value})} /></p> <br/>
+                            </div>
                         </div>
                         <div className="col-12 col-lg-3 col-md-4 col-sm-5">
-                            <section className="container grid grid-template-columns-1">
+                            <section className="container grid grid-template-columns-1 submit-div">
+                                <div classNam="item">
+                                    <button type="button" className="btn btn-primary btn-m btn-b" id="ok" onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
+                                </div>
                                 <div className = "item">
                                     <button type = "button" className = "btn btn-primary btn-m" onClick={this.lambdaFunction}><b id="lambda">λ</b></button>
                                     {/* <button type = "button" className = "btn btn-primary btn-s" onClick={this.pipeFunction}>|</button>
                                     <button type = "button" className = "btn btn-primary btn-s" onClick={this.arrowFunction}>-></button> */}
-                                </div>
-                                <div classNam="item">
-                                    <button type="button" className="btn btn-primary btn-m btn-b" id="ok" onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
                                 </div>
                                 {/* <div className = "item">
                                     <button type = "button" className = "btn btn-primary btn-m" onClick={this.historicoFunction}>Histórico</button>

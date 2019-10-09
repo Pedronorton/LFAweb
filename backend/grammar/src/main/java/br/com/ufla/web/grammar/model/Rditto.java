@@ -38,8 +38,8 @@ public class Rditto {
 	
 	public static String recursion_initial_symbol_solution_descr_parameters() {
 		if (langs.equals("pt"))
-			return StringLangsBR.initial_symbol_not_recursive;
-		return StringLangs.recursion_found_initial;
+			return StringLangsBR.recursion_initial_symbol_solution_descr_parameters;
+		return StringLangs.recursion_initial_symbol_solution_descr_parameters;
 	}
 	
 }

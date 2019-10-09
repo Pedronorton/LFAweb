@@ -175,14 +175,9 @@ public class Grammar implements Cloneable {
     //                                                        final AcademicSupport academicSupport) {
     public AcademicSupport getGrammarWithInitialSymbolNotRecursive(final Grammar g) {
     	
-//    	System.out.println("Initial: " + g.getInitialSymbol());
-//    	g.getTerminals().forEach( (String terminal) -> {System.out.print(terminal + " ");} );
-//    	System.out.println();
-//    	g.getVariables().forEach( (String variable) -> {System.out.print(variable + " ");} );
-//    	System.out.println();
-//    	g.getRules().forEach( (Rule r) -> {System.out.print(r.getLeftSide() + " ");
-//    		System.out.println(r.getRightSide());	} );
-//    	System.out.println();
+    	System.out.println("InitialGr: " + g);
+    	
+    	
     	
         Grammar gc = (Grammar) g.clone();
         AcademicSupport academicSupport = new AcademicSupport();
