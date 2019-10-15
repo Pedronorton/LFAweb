@@ -1,0 +1,46 @@
+.modal {
+  font-size: 12px;
+  margin-top: 28px;
+}
+.modal > .header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+}
+.modal > .content {
+  width: 100%;
+}
+.modal > .actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+}
+.modal > .close {
+  cursor: pointer;
+  display: grid;
+  padding: 0px 2px;
+  line-height: 20px;
+  right: 1%;
+  top: 1%;
+  font-size: 24px;
+  background: #1a0202;
+  border-radius: 50%;
+  border: 1px solid black;
+  position: absolute;
+}
+
+.close {
+    -moz-appearance: none;
+    float: right;
+    font-weight: var(--ifm-font-weight-bold);
+    opacity: .5;
+    outline: 0;
+}
+
+button.close:hover {
+    background: red;
+    opacity: .9;
+}

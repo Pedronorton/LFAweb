@@ -20,7 +20,7 @@
     height: 14em;
 }
 .btn-m {
-    min-width: 10em;
+    min-width: 15em;
 }
 .grid {
     display: grid;
@@ -44,15 +44,10 @@
 .grid-template-columns-1 {
     grid-template-columns: 1fr;
 }
-.col2{
-    padding-right: 15em;
-}
+
 .row{
     margin-top: 2em;
     font-size: 1.5em;
-}
-#ok{
-    margin-bottom: 5em;
 }
 .fa-exclamation-circle{
     transform: rotate(180deg);
@@ -79,5 +74,74 @@
 }
 
 .submit-div {
+    text-align: left;
+}
+
+.btn.btn-primary.btn-m.time {
+    background-color: rgba(250, 154, 9, 0.966);
+    border: none;
+}
+
+.body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#text-area{
+    padding-right: 0;
+}
+
+.col-12.col-sm-4{
+    padding-top: 1.5em;
     padding-left: 0;
+}
+
+.btn-b {
+    height: 18.5em;
+}
+
+.popover-info {
+    padding-top: 1.5em;
+    padding-left: 0;
+}
+
+/* Tooltip container */
+.tooltiphtml .tooltiptext {
+    visibility: hidden;
+    width: 123px;
+    background-color: #000;
+    color: #f9f5f5;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    left: 64%;
+    margin-left: 39px;
+    margin-top: -10px;
+    /* left: 50%; */
+    
+}
+
+.tooltiphtml .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 42%;
+    right: 100%;
+    margin-top: -6px;
+    border-width: 11px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+
+.tooltiphtml:hover .tooltiptext {
+    visibility: visible;
+}
+
+.btn-group-toggle {
+    display: grid;
+}
+
+.btn .btn-secondary .btnLabel {
+    border-color: white;
 }

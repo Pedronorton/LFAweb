@@ -1,5 +1,5 @@
 import React from 'react';
-import './css/Bootstrap.css';
+import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
 

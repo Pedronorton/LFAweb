@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 import DataService from "../service/DataService";
 import { withRouter } from "react-router-dom";
+import {Popover, OverlayTrigger, ButtonToolbar} from "react-bootstrap";
+
+import './css/Main.css';
+import HistoricoIcon from "../img/tempo-restante.svg";
+import InfoIcon from "../img/160px-Infobox_info_icon.svg.png";
 
 import Accordion from "react-collapsy";
 import "../../node_modules/react-collapsy/lib/index.css";
 
-import './css/Main.css';
+// import Popup from "reactjs-popup";
+// import Content from "../component/Content"
 
 class Main extends Component {
     
@@ -46,11 +52,19 @@ class Main extends Component {
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.onSubmitNonRecursiveInitialSymbol = this.onSubmitNonRecursiveInitialSymbol.bind(this);
-        this.lambdaFunction = this.lambdaFunction.bind(this);
+        this.onChange = this.onChange.bind(this);
+
     }
     
-    lambdaFunction() {
-        this.setState( {variables : this.state.variables+" λ " } );
+    onChange(values) {
+        console.log(values);
+        let len = values.length;
+        let wordTest = values[len-3] + values[len-2] + values[len-1];
+        if ( wordTest === " . "){
+            let tmp = values.split(" . ");
+            tmp[0] += " λ ";
+            this.setState( {variables : tmp[0] } );
+        } else  this.setState( {variables : values} );
     }
     // pipeFunction() {
     //     document.getElementById("grammar-text").value=document.getElementById("grammar-text").value+" | ";
@@ -184,69 +198,70 @@ class Main extends Component {
             ).then(_ => this.props.history.push(`/`));
         }
         
-        onSubmitNonCascade (values) {
-            console.log("Non Cascade: " + values);
-            let dados ={
-                palavra: values.palavra,
-                variables: values.variables
-            };
-            
-            DataService.criaNonCascade(dados).then(
-                response => {
-                    console.log("Non Cascade: " + response.data);
-                    
-                    // this.setState({variables: response.data[2]});
-                    this.setState({varNC: <div>
-                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
-                        <br/>
-                        <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                    </div>});
-                }
-            )
-        }
+    onSubmitNonCascade (values) {
+        console.log("Non Cascade: " + values);
+        let dados ={
+            palavra: values.palavra,
+            variables: values.variables
+        };
         
-        onSubmitOnlyTerm (values) {
-            console.log("Only TERM values: " + values);
-            let dados ={
-                palavra: values.palavra,
-                variables: values.variables
-            };
-            
-            DataService.criaOnlyTerm(dados).then(
-                response => {
-                    console.log("Only TERM: " + response.data);
+        DataService.criaNonCascade(dados).then(
+            response => {
+                console.log("Non Cascade: " + response.data);
+                
+                // this.setState({variables: response.data[2]});
+                this.setState({varNC: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/>
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+                </div>});
+            }
+        )
+    }
     
-                    // this.setState({variables: response.data[2]});
-                    this.setState({varOT: <div>
-                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
-                        <br/>
-                        <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                    </div>});
-                }
-            )
-        }
+    onSubmitOnlyTerm (values) {
+        console.log("Only TERM values: " + values);
+        let dados ={
+            palavra: values.palavra,
+            variables: values.variables
+        };
         
-        onSubmitOnlyReach (values) {
-            console.log("Only REACH: " + values);
-            let dados ={
-                palavra: values.palavra,
-                variables: values.variables
-            };
-            
-            DataService.criaOnlyReach(dados).then(
-                response => {
-                    console.log("Only REACH: " + response.data);
-                    
-                    // this.setState({variables: response.data[2]});
-                    this.setState({varOR: <div>
-                        {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
-                        <br/>
-                        <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                    </div>});
-                }
-            );
-        }
+        DataService.criaOnlyTerm(dados).then(
+            response => {
+                console.log("Only TERM: " + response.data);
+
+                // this.setState({variables: response.data[2]});
+                this.setState({varOT: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/>
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+                </div>});
+            }
+        )
+    }
     
+    onSubmitOnlyReach (values) {
+        console.log("Only REACH: " + values);
+        let dados ={
+            palavra: values.palavra,
+            variables: values.variables
+        };
+        
+        DataService.criaOnlyReach(dados).then(
+            response => {
+                console.log("Only REACH: " + response.data);
+                
+                // this.setState({variables: response.data[2]});
+                this.setState({varOR: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/>
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
+                </div>});
+            }
+        );
+    }
+
+
     componentDidMount () {
         let lang = navigator.languages;
         if (lang.includes("pt")) {
@@ -279,13 +294,13 @@ class Main extends Component {
             console.log("AQUI !!!");
             return (
                 <React.Fragment>
-                    <div className="row">
-                        <div className="col-12 col-sm-7" id="text-area">
+                    <div className="row body">
+                        <div className="col-12 col-sm-8" id="text-area">
                             <div className="gramatica">
                                 <p>
                                     {this.state.displayLang.lGrammar[this.state.index]}: <br/>
                                     <textarea name="gramatica" className="campo gramatica" id="grammar-text" value={this.state.variables} 
-                                    onChange={event => this.setState({variables : event.target.value})} />
+                                    onChange={event => this.onChange(event.target.value)} />
                                 </p>
                                 
                             </div>
@@ -296,24 +311,72 @@ class Main extends Component {
                                 onChange={event => this.setState({palavra : event.target.value})} /></p> <br/>
                             </div>
                         </div>
-                        <div className="col-12 col-lg-3 col-md-4 col-sm-5">
-                            <section className="container grid grid-template-columns-1 submit-div">
-                                <div classNam="item">
-                                    <button type="button" className="btn btn-primary btn-m btn-b" id="ok" onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
+                        <div className="col-12 col-sm-4">
+                            <section className="submit-div">
+                                <div className="submit-button">
+                                    <button type="button" className="btn btn-primary btn-m btn-b" id="ok"
+                                    onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
                                 </div>
-                                <div className = "item">
-                                    <button type = "button" className = "btn btn-primary btn-m" onClick={this.lambdaFunction}><b id="lambda">λ</b></button>
-                                    {/* <button type = "button" className = "btn btn-primary btn-s" onClick={this.pipeFunction}>|</button>
-                                    <button type = "button" className = "btn btn-primary btn-s" onClick={this.arrowFunction}>-></button> */}
+                
+                                
+                                    <ButtonToolbar>
+                                        <OverlayTrigger trigger="click" key="top" placement="top"
+                                        overlay={
+                                            <Popover id="popover-positioned-top">
+                                                <Popover.Title as="div">Tutorial</Popover.Title>
+                                                    <Popover.Content>
+                                                        <div class="btn-group-toggle" data-toggle="buttons">
+
+                                                            <label className="btn btn-secondary btnLabel">
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>Grammar
+                                                                    <span className="tooltiptext">click me </span>
+                                                                </div>
+                                                            </label>
+
+                                                            <label className="btn btn-secondary btnLabel">
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>Lambda
+                                                                    <span className="tooltiptext">space point space </span>
+                                                                </div>
+                                                            </label>
+
+                                                            <label
+                                                                className="btn btn-secondary btnLabel">
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option3" autocomplete="off"/>Arrow
+                                                                    <span className="tooltiptext">space -> space</span>
+                                                                </div>
+                                                            </label>
+
+                                                        </div>
+                                                    </Popover.Content>
+                                            </Popover>
+                                        }>
+                                            <button type="button" className="btn btn-info btn-m" title="Tutorial">
+                                                <b id="lambda"> <img alt="" src={InfoIcon} width="24"/> </b>
+                                            </button>
+                                        </OverlayTrigger>
+                                    </ButtonToolbar>
+                                    
+                                    
+
+                                <div className = "">
+                                    <button type = "button" className = "btn btn-primary btn-m time" onClick={this.historicoFunction}><img alt="" src={HistoricoIcon} width="24"/></button>
                                 </div>
-                                {/* <div className = "item">
-                                    <button type = "button" className = "btn btn-primary btn-m" onClick={this.historicoFunction}>Histórico</button>
-                                </div> */}
                                
                             </section>
                         </div>
+
+              
+                           
+                 
+                    
                     </div>
                 </React.Fragment>
+                
+                
+                               
             );
         } else {
             
@@ -368,7 +431,7 @@ class Main extends Component {
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lOnlyReach[this.state.index]}
-                                onToggle={_ =>this.onSubmitOnlyReach(this.state)}>
+                                onToggle={_ => this.onSubmitOnlyReach(this.state)}>
                                     {this.state.varOR}
                             </Accordion>
 
