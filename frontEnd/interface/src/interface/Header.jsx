@@ -1,5 +1,5 @@
 import React from 'react';
-import './css/Header.css';
+import "../../node_modules/font-awesome/css/font-awesome.css";
 
 function App() {
   

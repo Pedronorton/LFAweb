@@ -1,24 +1,24 @@
-.modal {
+.modal2 {
   font-size: 12px;
   margin-top: 28px;
 }
-.modal > .header {
+.modal2 > .header {
   width: 100%;
   border-bottom: 1px solid gray;
   font-size: 18px;
   text-align: center;
   padding: 5px;
 }
-.modal > .content {
+.modal2 > .content {
   width: 100%;
 }
-.modal > .actions {
+.modal2 > .actions {
   width: 100%;
   padding: 10px 5px;
   margin: auto;
   text-align: center;
 }
-.modal > .close {
+.modal2 > .close {
   cursor: pointer;
   display: grid;
   padding: 0px 2px;

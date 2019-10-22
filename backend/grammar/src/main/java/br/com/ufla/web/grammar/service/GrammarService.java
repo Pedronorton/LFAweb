@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import br.com.ufla.web.grammar.core.AcademicSupport;
 import br.com.ufla.web.grammar.core.Grammar;
 import br.com.ufla.web.grammar.model.AttrServ;
 
@@ -30,7 +31,7 @@ public class GrammarService {
 		
 		System.out.println("GrammarService: " + s);
       	
-        String initSym = s.split("\n")[0].split("->")[0].replace(" ", "");
+        String initSym = s.split("\n")[0].split("→")[0].replace(" ", "");
         
         System.out.println("Simbolo Inicial: " + initSym);
         
@@ -44,14 +45,14 @@ public class GrammarService {
         for (String rule : listRules) {
         	
         	//aSb bb
-        	String[] temp = rule.split("->")[1].split("|");
+        	String[] temp = rule.split("→")[1].split("|");
         	
         	for (String tp : temp) {
         		System.out.println("terminais: " + tp);
         	}
         	
         	//S A
-        	var.add(String.valueOf(rule.split("->")[0].replace(" ", "")));
+        	var.add(String.valueOf(rule.split("→")[0].replace(" ", "")));
         	
         	for (String tp : temp) {
         		for (int i = 0; i <  tp.length(); ++i) {
@@ -106,7 +107,8 @@ public class GrammarService {
 	
 	public String[] getGrammarReady (AttrServ ats, int flag) {
 		Grammar[] gr = new Grammar[2];
-    	
+		String solutionComplete = "";
+		
     	System.out.println("getGrammarReady: " + ats.getVariables());
     	
     	
@@ -118,7 +120,9 @@ public class GrammarService {
     	
     	switch (flag) {
     		case 1: {
-    			gr[1] = gr[0].getGrammarWithInitialSymbolNotRecursive(gr[0]).getNewGrammar();
+    			AcademicSupport acadsup = gr[0].getGrammarWithInitialSymbolNotRecursive(gr[0]);
+    			solutionComplete = acadsup.getComments() + acadsup.getSolutionDescription();
+    			gr[1] = acadsup.getNewGrammar();
     			break;
     		}
     		
@@ -143,11 +147,12 @@ public class GrammarService {
     		}
     	}
     	
-    	String[] vetString = new String[3];
+    	String[] vetString = new String[4];
     	
 		vetString[0] =  gr[0].toHtml();
 		vetString[1] =  gr[1].HtmlWithColorInSpecialRules(gr[1].selectionRulesDiferent(gr[0].getRules()), "red");
 		vetString[2] =  gr[1].toString();
+		vetString[3] = solutionComplete;
 		
 		
 		return vetString;

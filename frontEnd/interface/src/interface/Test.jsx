@@ -1,8 +1,8 @@
 import React from "react";
 
 
-function Test () {
-
+function Test (props) {
+   
     return(
         <div className="Test">
            Jill

@@ -249,6 +249,9 @@ public class Grammar implements Cloneable {
         academicSupport.setResult(gc);
         academicSupport.setNewGrammar(gc);
         academicSupport.setSituation(situation);
+        
+        System.out.println("Description: " + solutionDescription.toString());
+        
         academicSupport.setSolutionDescription(solutionDescription.toString());
         return academicSupport;
     }

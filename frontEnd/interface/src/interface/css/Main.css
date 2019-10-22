@@ -77,9 +77,15 @@
     text-align: left;
 }
 
-.btn.btn-primary.btn-m.time {
-    background-color: rgba(250, 154, 9, 0.966);
-    border: none;
+.btn-time {
+    background-color: rgba(244, 169, 15, 0.91);
+    border-color: rgba(244, 169, 15, 0.91);
+}
+
+.btn-time:hover {
+    background-color: rgba(255, 156, 9, 0.96);
+    border-color: rgba(247, 154, 14, 0.96);
+    color: white;
 }
 
 .body {
@@ -145,3 +151,14 @@
 .btn .btn-secondary .btnLabel {
     border-color: white;
 }
+
+button#ok {
+    font-weight: bold;
+}
+/*.fundo{
+    background-image: url("../../img/gg.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position-x: center;
+    background-position-y: center;
+}*/
