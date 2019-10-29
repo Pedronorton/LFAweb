@@ -98,14 +98,16 @@ class Main extends Component {
         console.log("Grammar " + values);
         let tempGrammar = values;
         let len = values.length;
-        let wordTest = values[len-1];
-        let wordTest1 = values[len-2] + values[len-1];
-        if ( wordTest === "."){
-            let tmp = values.split(".");
-            tmp[0] += "λ";
-            tempGrammar = tmp[0];
-            this.setState( {variables : tmp[0] } );
-        }else if (wordTest1 === "->"){
+        let wordTest = values[len-2] + values[len-1];
+
+        let wordTesLambda = values.split(".");
+
+        // Condição que verifica se houve split, se houve é porque existe ponto.
+        if ( wordTesLambda.length > 1) {
+            wordTesLambda[0] = wordTesLambda[0] + "λ" + wordTesLambda[1];
+            tempGrammar = wordTesLambda[0];
+            this.setState( {variables : wordTesLambda[0] } );
+        }else if (wordTest === "->"){
             let tmp = values.split("->");
             tmp[0] += "→";
             tempGrammar = tmp[0];
@@ -129,7 +131,7 @@ class Main extends Component {
     validation (text) {
 
         console.log("Validation " + text.length + " " + text);
-        if (text.length <= 3) {
+        if (text.length <= 2) {
             console.log("1 if");
             return false;
         }
@@ -138,10 +140,15 @@ class Main extends Component {
         
         for (let rule of rules) {
 
+            console.log("RULES: " + rule);
+            if ((rule === "") || (rule === " ")) //Não tem necessidade de verificar espaços
+                continue;
+
             let tmpR = rule.split("→");
             if ((tmpR[0] === rule) || (tmpR.length > 2)) {
-                console.log("2 if " + (tmpR[0] === rule) + " " + (tmpR.length > 2) +
-                " " + "len : " + tmpR.length + " rule: " + rule);
+                console.log("2 if: " + (tmpR[0] === rule) + " " + (tmpR.length > 2) +
+                " " + "len : " + tmpR.length + " rule: " + rule + "\n");
+                console.log("tmpR: " + tmpR);
 
                 if (this.state.lang === "pt")
                     this.setState({menssage: "Faltando →"});
@@ -175,58 +182,49 @@ class Main extends Component {
             
         }
 
-        // // Lista das Variáriaveis da regra da esquerda
-        // let variablesTemp = [];
+        //Lista de regra da direita do S -> A 
+        let listRule = [];
+        let tmp = rules[0].split("→");
+        let tmp2 = tmp[1].split("|");
+        for (let v of tmp2) {
+            let elem = v.trim();
+            if (elem.toUpperCase() === elem)
+                listRule.push(v.trim());
+            else if (elem.length > 1) {
+                for (let l of elem) {
+                    if (l.toUpperCase() === l)
+                        listRule.push(l.trim());
+                }
+            }
+        }
 
-        // //Lista de regra da direita
-        // let listRule = [];
-        // for (let r of rules) {
-        //     let tmp = r.split("→");
-        //     let tmp2 = tmp[1].split("|");
-        //     for (let v of tmp2) {
-        //         listRule.push(v.trim());
-        //     }
-        //     variablesTemp.push(tmp[0].trim());
-        // }
-        // variablesTemp.reverse();
-        // let initialSymbol = variablesTemp.pop();
+        // Lista das Variáriaveis da regra da esquerda
+        let variablesTemp = [];
+        for (let r of rules) {
+            tmp = r.split("→");
+            variablesTemp.push(tmp[0].trim());
+        }
+        variablesTemp.reverse();
+        variablesTemp.pop();
 
-        // let listVarRight = [];
-        // for (let t of listRule) {
-        //     for (let char of t) {
-        //         console.log("CHAR : " + char);
-        //         console.log("CHAR : " + char.toUpperCase());
-        //         console.log("Teste : " + (char.toUpperCase === char) + " " +
-        //         (char !== initialSymbol) + " " + (!listVarRight.includes(char)));
-        //         if ((char.toUpperCase() === char) && (char !== " ")
-        //         && (char !== "")) {
-        //             if ((char !== initialSymbol) && (!listVarRight.includes(char))) {
-        //                 console.log("enter: " + char)
-        //                 listVarRight.push(char.trim());
-        //             }
-        //         }
-        //     }
-               
-        // }
+        console.log("ListLeft : " + variablesTemp + "TAM : " + variablesTemp.length);
+        console.log("listRule : " + listRule + "TAM: " + listRule.length);
+        let eqif = listRule.every(elem => variablesTemp.includes(elem));
+        console.log("Elements is equals: " + eqif);
 
-        // console.log("ListLeft : " + variablesTemp + "TAM : " +variablesTemp.length);
-        // console.log("ListRight : " + listVarRight + "TAM: " + listVarRight.length);
-        // let eqif = variablesTemp.every(elem => listVarRight.includes(elem));
-        // console.log("Elements is equals: " + eqif);
+        if (!eqif) {
+            let subtractionElem = [];
 
-        // if ((variablesTemp.length !== listVarRight.length) || (!eqif)) {
-        //     let subtractionElem = [];
-
-        //     variablesTemp.every( elem => { 
-        //         if (!listVarRight.includes(elem)) subtractionElem.push(elem); } );
-        //     console.log("5 if");
-        //     if (this.state.lang === "pt")
-        //         this.setState({menssage: `Sua gramática não contém ${subtractionElem.toString()}
-        //         como regra da esquerda.`});
-        //     else this.setState({menssage: `Your grammar missing ${subtractionElem.toString()}
-        //         in left rule`});
-        //     return false;
-        // }
+            listRule.every( elem => {
+                if (!variablesTemp.includes(elem)){subtractionElem.push(elem); }} );
+            console.log("5 if");
+            if (this.state.lang === "pt")
+                this.setState({menssage: `Sua gramática não está definido ${subtractionElem.toString()}
+                como regra da esquerda.`});
+            else this.setState({menssage: `Your grammar not definided ${subtractionElem.toString()}
+                in left rule`});
+            return false;
+        }
 
         console.log("Último true");
         return true;
