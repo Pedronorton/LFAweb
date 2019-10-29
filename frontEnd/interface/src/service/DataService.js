@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const URL = "https://limitless-garden-05070.herokuapp.com";//"http://localhost:8080";
+const URL = "http://localhost:8080";
 
 class DataService {
 

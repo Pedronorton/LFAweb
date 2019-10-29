@@ -11,18 +11,18 @@ import "./css/Interface.css";
 function App() {
   let lang = navigator.languages;
   let descToggle = {
-        lambda: "space point space",
+        lambda: "point",
         grammar : "click me",
-        arrow: "space -> space"
+        arrow: "->"
   };
   let buttonNames = {
       grammar: "grammar",
       arrow: "arrow"
   }
   if (lang.includes("pt")) { 
-    descToggle.lambda = "espaço ponto espaço";
+    descToggle.lambda = "ponto";
     descToggle.grammar = "Clique aqui";
-    descToggle.arrow = "espaço -> espaço";
+    descToggle.arrow = "->";
     buttonNames.grammar = "Gramática";
     buttonNames.arrow = "seta";
   }

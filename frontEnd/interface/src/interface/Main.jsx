@@ -15,7 +15,7 @@ import "./css/ShakeInfoButton.css";
 
 // import Doubt from "../img/doubtII.png";
 import "../../node_modules/font-awesome/css/font-awesome.css";
-import "./css/PopUps.css"
+import "./css/PopUps.css";
 
 class Main extends Component {
     
@@ -35,18 +35,27 @@ class Main extends Component {
                 varOT: "",
                 varOR: "",
             },
+            grammarV: "",
+            grammarE: "",
+            grammarP: "",
+            grammarS: "",
             index : 0,
             displayLang: {
                 lWord : ["Word","Palavra"],
-                lDescription : ["If you want to verify acceptances and derivations","Se você quiser verificar aceitações e derivações"],
+                lDeion : ["If you want to verify acceptances and derivations","Se você quiser verificar aceitações e derivações"],
                 lGrammar : ["Grammar","Gramática"],
                 lSubmit : ["GO !","Vamos !"],
                 lInitialNonRec : ["Initial non recursive","Inicial não recusivo"],
                 lEsseniallyNonContract : ["Essentially non contractile","Essencialmente não contrátil"],
-                lNonCascade : ["No cascade","Sem cascata"],
+                lNonCascade : ["No chain rules","Sem regras da cadeia"],
                 lOnlyTerm : ["Only terminals","Apenas terminais"],
                 lOnlyReach : ["Only reacheable","Apenas alcançáveis"],
-                lSolutionComplete: ""
+                ltextBox: ["Input Grammar: ","Gramática de entrada: "],
+                lSolutionCompleteNRIS: "",
+                lSolutionCompleteENC: "",
+                lSolutionCompleteNC: "",
+                lSolutionCompleteOT: ""
+
             },
             display: {
                 displayNRIS: false,
@@ -69,7 +78,11 @@ class Main extends Component {
 
             menssage: "is empty field grammar",
 
-            visibleSolution: "none"
+            visibleSolutionNRIS: "none",
+            visibleSolutionENC: "none",
+            visibleSolutionNC: "none",
+            visibleSolutionOT: "none",
+            visibleSolutionOR: "none"
         };
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -85,16 +98,16 @@ class Main extends Component {
         console.log("Grammar " + values);
         let tempGrammar = values;
         let len = values.length;
-        let wordTest = values[len-3] + values[len-2] + values[len-1];
-        let wordTest1 = values[len-4] + values[len-3] + values[len-2] + values[len-1];
-        if ( wordTest === " . "){
-            let tmp = values.split(" . ");
-            tmp[0] += " λ ";
+        let wordTest = values[len-1];
+        let wordTest1 = values[len-2] + values[len-1];
+        if ( wordTest === "."){
+            let tmp = values.split(".");
+            tmp[0] += "λ";
             tempGrammar = tmp[0];
             this.setState( {variables : tmp[0] } );
-        }else if (wordTest1 === " -> "){
-            let tmp = values.split(" -> ");
-            tmp[0] += " → ";
+        }else if (wordTest1 === "->"){
+            let tmp = values.split("->");
+            tmp[0] += "→";
             tempGrammar = tmp[0];
             this.setState({variables: tmp[0]});
         }else {
@@ -128,7 +141,7 @@ class Main extends Component {
             let tmpR = rule.split("→");
             if ((tmpR[0] === rule) || (tmpR.length > 2)) {
                 console.log("2 if " + (tmpR[0] === rule) + " " + (tmpR.length > 2) +
-                " " + "len : " + tmpR.length + "rule: " + rule);
+                " " + "len : " + tmpR.length + " rule: " + rule);
 
                 if (this.state.lang === "pt")
                     this.setState({menssage: "Faltando →"});
@@ -162,58 +175,58 @@ class Main extends Component {
             
         }
 
-        // Lista das Variáriaveis da regra da esquerda
-        let variablesTemp = [];
+        // // Lista das Variáriaveis da regra da esquerda
+        // let variablesTemp = [];
 
-        //Lista de regra da direita
-        let listRule = [];
-        for (let r of rules) {
-            let tmp = r.split("→");
-            let tmp2 = tmp[1].split("|");
-            for (let v of tmp2) {
-                listRule.push(v.trim());
-            }
-            variablesTemp.push(tmp[0].trim());
-        }
-        variablesTemp.reverse();
-        let initialSymbol = variablesTemp.pop();
+        // //Lista de regra da direita
+        // let listRule = [];
+        // for (let r of rules) {
+        //     let tmp = r.split("→");
+        //     let tmp2 = tmp[1].split("|");
+        //     for (let v of tmp2) {
+        //         listRule.push(v.trim());
+        //     }
+        //     variablesTemp.push(tmp[0].trim());
+        // }
+        // variablesTemp.reverse();
+        // let initialSymbol = variablesTemp.pop();
 
-        let listVarRight = [];
-        for (let t of listRule) {
-            for (let char of t) {
-                console.log("CHAR : " + char);
-                console.log("CHAR : " + char.toUpperCase());
-                console.log("Teste : " + (char.toUpperCase === char) + " " +
-                (char !== initialSymbol) + " " + (!listVarRight.includes(char)));
-                if ((char.toUpperCase() === char) && (char !== " ")
-                && (char !== "")) {
-                    if ((char !== initialSymbol) && (!listVarRight.includes(char))) {
-                        console.log("enter: " + char)
-                        listVarRight.push(char.trim());
-                    }
-                }
-            }
+        // let listVarRight = [];
+        // for (let t of listRule) {
+        //     for (let char of t) {
+        //         console.log("CHAR : " + char);
+        //         console.log("CHAR : " + char.toUpperCase());
+        //         console.log("Teste : " + (char.toUpperCase === char) + " " +
+        //         (char !== initialSymbol) + " " + (!listVarRight.includes(char)));
+        //         if ((char.toUpperCase() === char) && (char !== " ")
+        //         && (char !== "")) {
+        //             if ((char !== initialSymbol) && (!listVarRight.includes(char))) {
+        //                 console.log("enter: " + char)
+        //                 listVarRight.push(char.trim());
+        //             }
+        //         }
+        //     }
                
-        }
+        // }
 
-        console.log("ListLeft : " + variablesTemp + "TAM : " +variablesTemp.length);
-        console.log("ListRight : " + listVarRight + "TAM: " + listVarRight.length);
-        let eqif = variablesTemp.every(elem => listVarRight.includes(elem));
-        console.log("Elements is equals: " + eqif);
+        // console.log("ListLeft : " + variablesTemp + "TAM : " +variablesTemp.length);
+        // console.log("ListRight : " + listVarRight + "TAM: " + listVarRight.length);
+        // let eqif = variablesTemp.every(elem => listVarRight.includes(elem));
+        // console.log("Elements is equals: " + eqif);
 
-        if ((variablesTemp.length !== listVarRight.length) || (!eqif)) {
-            let subtractionElem = [];
+        // if ((variablesTemp.length !== listVarRight.length) || (!eqif)) {
+        //     let subtractionElem = [];
 
-            variablesTemp.every( elem => { 
-                if (!listVarRight.includes(elem)) subtractionElem.push(elem); } );
-            console.log("5 if");
-            if (this.state.lang === "pt")
-                this.setState({menssage: `Sua gramática não contém ${subtractionElem.toString()}
-                como regra da esquerda.`});
-            else this.setState({menssage: `Your grammar missing ${subtractionElem.toString()}
-                in left rule`});
-            return false;
-        }
+        //     variablesTemp.every( elem => { 
+        //         if (!listVarRight.includes(elem)) subtractionElem.push(elem); } );
+        //     console.log("5 if");
+        //     if (this.state.lang === "pt")
+        //         this.setState({menssage: `Sua gramática não contém ${subtractionElem.toString()}
+        //         como regra da esquerda.`});
+        //     else this.setState({menssage: `Your grammar missing ${subtractionElem.toString()}
+        //         in left rule`});
+        //     return false;
+        // }
 
         console.log("Último true");
         return true;
@@ -261,9 +274,54 @@ class Main extends Component {
                         //     "palavra : " + dados.palavra + "\n" +
                         //     "Gramática : " + dados.variables + "\n"
                         // );
-    
-                        this.setState({varHTML: <div className="fundo" dangerouslySetInnerHTML={{__html: response.data}} />
-    
+                        let vetV = "{";
+                        let count = 0;
+                        for (let elem of response.data[1]){
+                            count ++;
+                            vetV += elem;
+                            if (count < response.data[1].length){
+                                vetV += ", ";
+                            }
+                        }
+                        vetV+="}";
+                        count = 0;
+                        let vetE = "{";
+                        for (let elem of response.data[2]){
+                            count ++;
+                            vetE += elem;
+                            if (count < response.data[2].length){
+                                vetE += ", "
+                            }
+                        }
+                        vetE+="}";
+                        let vetP = "{";
+                        count = 0;
+                        let count1 = 0;
+                        for (let elem of response.data[3]){
+                            vetP += elem;
+                            count++;
+                            count1++;
+                            if (count < response.data[3].length){
+                                vetP += ", ";
+                                if (count1 === 3){
+                                    count1 = 0;
+                                    vetP+="<br>";
+                                }
+                            }
+                        }
+                        vetP+="}";
+                        this.setState({varHTML: <div className="grammarInput">
+                                <br/><div style={{"font-size": "20px",
+                                                "border": "1px solid black",
+                                                "text-align": "center",
+                                                "width": "30VH"
+                                                }}
+                                dangerouslySetInnerHTML={{__html: this.state.displayLang.ltextBox[this.state.index] + "<br/>" 
+                                    + response.data[0][1] }}/><br/></div>,
+                                grammarV: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetV}}></div>,
+                                grammarE: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetE}}></div>,
+                                grammarP: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetP}}></div>,
+                                grammarS: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: "{" + response.data[0][0] + "}"}}></div>
                         });
                     }
                 ).then(_ => this.props.history.push(`/`));
@@ -305,8 +363,9 @@ class Main extends Component {
                     // this.setState({variables: response.data[2]});
 
                     this.setState({varNRIS: <div> <br/>                   
-                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
-                    lSolutionComplete: <div><br/> <div dangerouslySetInnerHTML={{__html: response.data[3]}}/>  </div> });
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /><br/></div>,
+                    lSolutionCompleteNRIS: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
                 }
             ).then(_ => this.props.history.push(`/`));
 
@@ -340,10 +399,10 @@ class Main extends Component {
                     // );
                     // this.setState({variables: response.data[2]});
 
-                    this.setState({varENC: <div>
-                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}} />  */}
-                    <br/>
-                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>});
+                    this.setState({varENC: <div><br/>
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
+                    lSolutionCompleteENC: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
                 }
             ).then(_ => this.props.history.push(`/`));
         }
@@ -364,7 +423,9 @@ class Main extends Component {
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
                     <br/>
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                </div>});
+                </div>,
+                lSolutionCompleteNC: <div className="popUpAccord">
+                    <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div>});
             }
         )
     }
@@ -384,8 +445,9 @@ class Main extends Component {
                 this.setState({varOT: <div>
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
                     <br/>
-                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                </div>});
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>,
+                    lSolutionCompleteOT: <div className="popUpAccord">
+                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div>});
             }
         )
     }
@@ -404,9 +466,9 @@ class Main extends Component {
                 // this.setState({variables: response.data[2]});
                 this.setState({varOR: <div>
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
-                    <br/>
-                    <div dangerouslySetInnerHTML={{__html: response.data[1]}}/>
-                </div>});
+                    <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>,
+                    lSolutionCompleteOR: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
             }
         );
     }
@@ -482,7 +544,7 @@ class Main extends Component {
                             </div>
                             <br/>
                             <div className="palavra">
-                                <p><input placeholder={this.state.displayLang.lWord[this.state.index] + " (" + this.state.displayLang.lDescription[this.state.index]+")" }
+                                <p><input placeholder={this.state.displayLang.lWord[this.state.index] + " (" + this.state.displayLang.lDeion[this.state.index]+")" }
                                 name="palavra" className="campo" value={this.state.palavra} 
                                 onChange={event => this.setState({palavra : event.target.value})} /></p> <br/>
                             </div>
@@ -504,35 +566,11 @@ class Main extends Component {
                                                 <Popover.Title as="div">Tutorial</Popover.Title>
                                                     <Popover.Content>
                                                         <div class="btn-group-toggle" data-toggle="buttons">
-
-                                                            {/* <label className="btn btn-secondary btnLabel">
-                                                                <div className="tooltiphtml">
-                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>Grammar
-                                                                    <span className="tooltiptext">click me </span>
-                                                                </div>
-                                                            </label> */}
                                                             {this.state.buttonGrammar}
 
-                                                            {/*<Popup modal trigger={<button className="btn btn-secondary btnLabel">
-                                                                    <div className="tooltiphtml">
-                                                                        <input type="radio" name="options" id="option1" autocomplete="off"/>Lambda
-                                                                        <span className="tooltiptext">space point space </span>
-                                                                    </div>
-                                                                </button>}>
-                                                                {close => <Content close={close} />}
-                                                            </Popup>*/}
                                                             {this.state.buttonLambda}
                                                                 
-
-                                                            {/* <label
-                                                                className="btn btn-secondary btnLabel">
-                                                                <div className="tooltiphtml">
-                                                                    <input type="radio" name="options" id="option3" autocomplete="off"/>Arrow
-                                                                    <span className="tooltiptext">space -> space</span>
-                                                                </div>
-                                                            </label> */}
                                                             {this.state.buttonArrow}
-
                                                         </div>
                                                     </Popover.Content>
                                             </Popover>
@@ -544,8 +582,6 @@ class Main extends Component {
                                             </div>
                                         </OverlayTrigger>
                                     </ButtonToolbar>
-                                    
-                                    
 
                                 <div className = "">
                                     <button type = "button" className = "btn btn-time btn-m" onClick={this.historicoFunction}><img alt="" src={HistoricoIcon} width="24"/></button>
@@ -554,10 +590,6 @@ class Main extends Component {
                             </section>
                         </div>
 
-              
-                           
-                 
-                    
                     </div>
                 </React.Fragment>
                 
@@ -568,23 +600,41 @@ class Main extends Component {
             
             return(
                 <React.Fragment>
+                    <div className="container grid grid-template-columns-5 conteudo">
+                        <div className="item G">
+                        </div>
+                        <div className="item V">
+                            {this.state.grammarV}
+                        </div>
+                        <div className="item E">
+                            {this.state.grammarE}
+                        </div>
+                        <div className="item P">
+                            {this.state.grammarP}
+                        </div>
+                        <div className="item S">
+                            {this.state.grammarS}
+                        </div>
+                    </div>
+                    <br/>
                     {this.state.varHTML}
-                    
-                    <div className="container grid grid-template-columns-1 conteudo">
+                    <br/>
+                    <div className="container grid grid-template-columns-3 conteudo">
                         
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lInitialNonRec[this.state.index]}
                                 onToggle={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>
                                     {this.state.varNRIS}
-                                <div className="AccordTrigger" onClick={_ => this.setState({visibleSolution: "block"}) } ><i className="fa fa-question-circle"></i> </div>
-                                {/* <div className="AccorModal overflow-auto" style={{display: `${this.state.visibleSolution}`}}>
+                                <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNRIS: "block"}) } >
+                                    <i className="fa fa-question-circle popbtn"></i> </div>
+                                <div className="AccorModal" style={{display: `${this.state.visibleSolutionNRIS}`}}>
                                     <div className="AccordModal-content">
                                         <span className="close-bttn"
-                                        onClick={_ => this.setState({visibleSolution: "none"}) }>X</span>
-                                        {this.state.lSolutionComplete}
+                                        onClick={_ => this.setState({visibleSolutionNRIS: "none"}) }>X</span>
+                                        {this.state.lSolutionCompleteNRIS}
                                     </div>
-                                </div> */}
+                                </div>
                             </Accordion>
                             
                         </div>
@@ -594,6 +644,15 @@ class Main extends Component {
                             title={this.state.displayLang.lEsseniallyNonContract[this.state.index]}
                             onToggle={_ => this.onSubmitNonContracting(this.state)}>
                                 {this.state.varENC}
+                                <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionENC: "block"}) } >
+                                    <i className="fa fa-question-circle popbtn"></i> </div>
+                                <div className="AccorModal" style={{display: `${this.state.visibleSolutionENC}`}}>
+                                    <div className="AccordModal-content">
+                                        <span className="close-bttn"
+                                        onClick={_ => this.setState({visibleSolutionENC: "none"}) }>X</span>
+                                        {this.state.lSolutionCompleteENC}
+                                    </div>
+                                </div>
                         </Accordion>
                             
                         </div>
@@ -603,16 +662,34 @@ class Main extends Component {
                                 title={this.state.displayLang.lNonCascade[this.state.index]}
                                 onToggle={_ =>this.onSubmitNonCascade(this.state)}>
                                     {this.state.varNC}
+                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNC: "block"}) } >
+                                        <i className="fa fa-question-circle popbtn"></i> </div>
+                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionNC}`}}>
+                                        <div className="AccordModal-content">
+                                            <span className="close-bttn"
+                                            onClick={_ => this.setState({visibleSolutionNC: "none"}) }>X</span>
+                                            {this.state.lSolutionCompleteNC}
+                                        </div>
+                                    </div>
                             </Accordion>
                             
                         </div>
                     </div>
-                    <div className="container grid grid-template-columns-1 conteudo">
+                    <div className="container grid grid-template-columns-3 conteudo">
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lOnlyTerm[this.state.index]}
                                 onToggle={_ =>this.onSubmitOnlyTerm(this.state)}>
                                     {this.state.varOT}
+                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOT: "block"}) } >
+                                        <i className="fa fa-question-circle popbtn"></i> </div>
+                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionOT}`}}>
+                                        <div className="AccordModal-content">
+                                            <span className="close-bttn"
+                                            onClick={_ => this.setState({visibleSolutionOT: "none"}) }>X</span>
+                                            {this.state.lSolutionCompleteOT}
+                                        </div>
+                                    </div>
                             </Accordion>
                         
                         </div>
@@ -622,6 +699,15 @@ class Main extends Component {
                                 title={this.state.displayLang.lOnlyReach[this.state.index]}
                                 onToggle={_ => this.onSubmitOnlyReach(this.state)}>
                                     {this.state.varOR}
+                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOR: "block"}) } >
+                                        <i className="fa fa-question-circle popbtn"></i> </div>
+                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionOR}`}}>
+                                        <div className="AccordModal-content reach">
+                                            <span className="close-bttn"
+                                            onClick={_ => this.setState({visibleSolutionOR: "none"}) }>X</span>
+                                            {this.state.lSolutionCompleteOR}
+                                        </div>
+                                    </div>
                             </Accordion>
 
                         </div>

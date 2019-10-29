@@ -41,10 +41,52 @@
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 10px;
 }
-.grid-template-columns-1 {
-    grid-template-columns: 1fr;
+.grid-template-columns-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
 }
-
+.grid-template-columns-5 {
+    grid-template-columns: 1.5fr 1fr 1fr 2.2fr 0.9fr;
+    width: 55%;
+    min-height: 5em;
+}
+.G{
+    background-image: url("../../img/vsigmaps/g.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.V{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../img/vsigmaps/v.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.E{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../img/vsigmaps/sigma.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.P{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../img/vsigmaps/p.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.S{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../../img/vsigmaps/s.jpg");
+    background-position: right;
+    background-repeat: no-repeat;
+}
 .row{
     margin-top: 2em;
     font-size: 1.5em;
@@ -54,10 +96,8 @@
 }
 
 .conteudo {
-    width: 100%;
     padding-right: 15px;
     padding-left: 15px;
-    grid-template-columns: 1fr 1fr 1fr;
     grid-column-gap: 20px;
 }
 
@@ -155,10 +195,8 @@
 button#ok {
     font-weight: bold;
 }
-/*.fundo{
-    background-image: url("../../img/gg.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position-x: center;
-    background-position-y: center;
-}*/
+
+.grammarInput {
+    display: flex;
+    justify-content: center;
+}

@@ -24,15 +24,14 @@ import br.com.ufla.web.grammar.model.AttrServ;
 import br.com.ufla.web.grammar.model.Rditto;
 import br.com.ufla.web.grammar.service.GrammarService;
 
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200", "localhost:3000", "localhost:4200",
-		"https://immense-tundra-58333.herokuapp.com", "192.168.1.102:3000"})
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:4200", "localhost:3000", "localhost:4200",
+        "https://immense-tundra-58333.herokuapp.com"})
 @RestController
 public class GrammarController {
 
-	@Autowired
+    @Autowired
     private GrammarService grServ;
 
-   
 //    @GetMapping("/grammar/html")
 //    public String getHtml () {
 //        System.out.println("HTML : " + gr[1].toHtml());
@@ -44,81 +43,55 @@ public class GrammarController {
 //        System.out.println("grammar[1]: " + gr[1]);
 //        return gr[1].toString();
 //    }
-	
-	@ResponseBody
+
+    @ResponseBody
     @PostMapping("/grammar/HTML")
-    public String CriaGramaticaHTML (@RequestBody AttrServ attrGCont ) {
-    	
-    	System.out.println("AttrServ: " + attrGCont.getVariables());
-    	
-    	grServ.setGramatica(attrGCont.getVariables());
-    	
+    public List<String[]> CriaGramaticaHTML(@RequestBody AttrServ attrGCont) {
+
+        System.out.println("AttrServ: " + attrGCont.getVariables());
+
+        grServ.setGramatica(attrGCont.getVariables());
+
         Grammar gram = grServ.getGramatica();
-           	
-    	String stringGram =  gram.toHtml();
-    	 
-    	return stringGram;
+
+//        String stringGram = gram.toHtml();
+
+        return grServ.criaVetHTML(gram);
     }
-	
-	@ResponseBody
-	@PostMapping("/{palavra}/grammar/nonRecursiveInitial")
-	public String[] CriaGramaticaNonRecursiveInitial (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
-		
-	
-	//	        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonRecursiveInitial").buildAndExpand(" ").toUri();
-	
-	//	        return ResponseEntity.created(uri).build();
-	 	return grServ.getGrammarReady(attrGCont, 1);
-	}
+
+    @ResponseBody
+    @PostMapping("/{palavra}/grammar/nonRecursiveInitial")
+    public String[] CriaGramaticaNonRecursiveInitial(@PathVariable String palavra, @RequestBody AttrServ attrGCont) {
+
+        return grServ.getGrammarReady(attrGCont, 1);
+    }
 
     @ResponseBody
     @PostMapping("/{palavra}/grammar/nonContracting")
-    public String[] CriaGramaticaNonContracting (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
-        
-    	
-    	
-//        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
-//
-//        return ResponseEntity.created(uri).build();
-    	return grServ.getGrammarReady(attrGCont, 2);
-    }
-    
-	@ResponseBody
-	@PostMapping("/{palavra}/grammar/nonCascade")
-	public String[] CriaGramaticaNonCascade (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
-	    
-		
-		
-	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
-	//
-	//      return ResponseEntity.created(uri).build();
-	  	return grServ.getGrammarReady(attrGCont, 3);
-	}
+    public String[] CriaGramaticaNonContracting(@PathVariable String palavra, @RequestBody AttrServ attrGCont) {
 
-    
-	@ResponseBody
-	@PostMapping("/{palavra}/grammar/onlyTerm")
-	public String[] CriaGramaticaOnlyTerm (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
-	    
-		
-		
-	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
-	//
-	//      return ResponseEntity.created(uri).build();
-	  	return grServ.getGrammarReady(attrGCont, 4);
-	}
-	
-	
-	@ResponseBody
-	@PostMapping("/{palavra}/grammar/onlyReach")
-	public String[] CriaGramaticaOnlyReach (@PathVariable String palavra, @RequestBody AttrServ attrGCont ) {
-	    
-		
-		
-	//      URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/nonContracting").buildAndExpand(" ").toUri();
-	//
-	//      return ResponseEntity.created(uri).build();
-	  	return grServ.getGrammarReady(attrGCont, 5);
-	}
+       return grServ.getGrammarReady(attrGCont, 2);
+    }
+
+    @ResponseBody
+    @PostMapping("/{palavra}/grammar/nonCascade")
+    public String[] CriaGramaticaNonCascade(@PathVariable String palavra, @RequestBody AttrServ attrGCont) {
+
+       return grServ.getGrammarReady(attrGCont, 3);
+    }
+
+    @ResponseBody
+    @PostMapping("/{palavra}/grammar/onlyTerm")
+    public String[] CriaGramaticaOnlyTerm(@PathVariable String palavra, @RequestBody AttrServ attrGCont) {
+
+        return grServ.getGrammarReady(attrGCont, 4);
+    }
+
+    @ResponseBody
+    @PostMapping("/{palavra}/grammar/onlyReach")
+    public String[] CriaGramaticaOnlyReach(@PathVariable String palavra, @RequestBody AttrServ attrGCont) {
+
+        return grServ.getGrammarReady(attrGCont, 5);
+    }
 
 }

@@ -16,7 +16,8 @@ public class AcademicSupport {
     private boolean situation;
     private Map<Integer, String> foundProblems;
     private Grammar grammar;
-    private Grammar newGrammar;
+    private Grammar newGrammar; //NEW
+    private Grammar oldGrammar; //NEW
     private String result;
     private String solutionDescription;
     private Set<Rule> insertedRules;
@@ -24,14 +25,14 @@ public class AcademicSupport {
     private List<Set<String>> firstSet;
     private List<Set<String>> secondSet;
     private List<Set<String>> thirdSet;
-
+    
     public AcademicSupport() {
         this("", false, new LinkedHashMap<Integer, String>(), "", "",
                 new LinkedHashSet<Rule>(), new LinkedHashSet<Rule>(),
                 new ArrayList<Set<String>>(), new ArrayList<Set<String>>(),
                 new ArrayList<Set<String>>(), new Grammar());
     }
-
+    
     public AcademicSupport(String comments, boolean situation,
                            Map<Integer, String> foundProblems,
                            Grammar resultGrammar, String solutionDescription,
@@ -53,7 +54,7 @@ public class AcademicSupport {
         this.secondSet = secondSet;
         this.thirdSet = thirdSet;
     }
-
+    
     //Construtor base
     public AcademicSupport(String comments, boolean situation,
                            Map<Integer, String> foundProblems,
@@ -76,7 +77,7 @@ public class AcademicSupport {
         this.secondSet = secondSet;
         this.thirdSet = thirdSet;
     }
-
+    
     /**
      * Formata uma gramática em texto com para visualização.
      *
@@ -94,7 +95,7 @@ public class AcademicSupport {
         }
         return txtGrammar.toString();
     }
-
+    
     /**
      * Formata uma variável e suas regras.
      *
@@ -104,10 +105,10 @@ public class AcademicSupport {
      */
     private String formatVariableRules(String variable, final Grammar grammar) {
         StringBuilder formatedRules = new StringBuilder();
-        System.out.println("VAR -> " + variable);
+//        System.out.println("AcademicSupportVAR -> " + variable);
         formatedRules.append(formatElement(variable)).append(" →");
         for (Rule element : grammar.getRules(/*variable*/)) {
-            System.out.println(element.toString());
+//            System.out.println(element.toString());
             formatedRules.append(" ").append(formatElement
                     (element.getRightSide())).append(" |");
         }
@@ -115,7 +116,7 @@ public class AcademicSupport {
                 - 1).append("<br>");
         return formatedRules.toString();
     }
-
+    
     /**
      * Formata um elemento de uma regra gramatical, caso este elemento for uma variável e tenha
      * digítos coloca os dígitos dentro da tag <sub>.
@@ -147,7 +148,7 @@ public class AcademicSupport {
         }
         return formatedElement.toString();
     }
-
+    
     /**
      * Insere um nova regra no conjunto de novas regras.
      *
@@ -156,7 +157,7 @@ public class AcademicSupport {
     public void insertNewRule(Rule newRule) {
         this.insertedRules.add(newRule);
     }
-
+    
     /**
      * Insere um regra irregular no conjunto de regras irregulares.
      *
@@ -165,7 +166,7 @@ public class AcademicSupport {
     public void insertIrregularRule(Rule irregularRule) {
         this.irregularRules.add(irregularRule);
     }
-
+    
     /**
      * Insere um conjunto na primeira lista de conjuntos.
      *
@@ -175,7 +176,7 @@ public class AcademicSupport {
     public void insertOnFirstSet(Set<String> currentSet, String decision) {
         firstSet.add(new LinkedHashSet<>(currentSet));
     }
-
+    
     /**
      * Insere um conjunto na segunda lista de conjuntos.
      *
@@ -185,7 +186,7 @@ public class AcademicSupport {
     public void insertOnSecondSet(Set<String> currentSet, String decision) {
         secondSet.add(new LinkedHashSet<>(currentSet));
     }
-
+    
     /**
      * Insere um conjunto na terceira lista de conjuntos.
      *
@@ -195,104 +196,112 @@ public class AcademicSupport {
     public void insertOnThirdSet(Set<String> currentSet, String decision) {
         thirdSet.add(new LinkedHashSet<>(currentSet));
     }
-
-
+    
+    
     // Métodos acessores
-
+    
     public String getComments() {
         return comments;
     }
-
+    
     public void setComments(String comments) {
         this.comments = comments;
     }
-
+    
     public boolean getSituation() {
         return situation;
     }
-
+    
     public void setSituation(boolean situation) {
         this.situation = situation;
     }
-
+    
     public Map<Integer, String> getFoundProblems() {
         return foundProblems;
     }
-
+    
     public void setFoundProblems(Map<Integer, String> foundProblems) {
         this.foundProblems = foundProblems;
     }
-
+    
     public Grammar getGrammar() {
         return grammar;
     }
-
+    
     public void setGrammar(Grammar grammar) {
         this.grammar = (Grammar) grammar.clone();
     }
-
+    
     public Grammar getNewGrammar() {
         return newGrammar;
     }
-
+    
     public void setNewGrammar(Grammar grammar) {
         this.newGrammar = (Grammar) grammar.clone();
     }
-
+    
     public String getResult() {
         return result;
     }
-
+    
     public void setResult(Grammar g) {
         this.result = formatResultGrammar(g);
     }
-
+    
     public String getSolutionDescription() {
         return solutionDescription;
     }
-
+    
     public void setSolutionDescription(String solutionDescription) {
         this.solutionDescription = solutionDescription;
     }
-
+    
     public Set<Rule> getInsertedRules() {
         return insertedRules;
     }
-
+    
     public void setInsertedRules(Set<Rule> insertedRules) {
         this.insertedRules = insertedRules;
     }
-
+    
     public Set<Rule> getIrregularRules() {
         return irregularRules;
     }
-
+    
     public void setIrregularRules(Set<Rule> irregularRules) {
         this.irregularRules = irregularRules;
     }
-
+    
     public List<Set<String>> getFirstSet() {
         return firstSet;
     }
-
+    
     public void setFirstSet(List<Set<String>> firstSet) {
         this.firstSet = firstSet;
     }
-
+    
     public List<Set<String>> getSecondSet() {
         return secondSet;
     }
-
+    
     public void setSecondSet(List<Set<String>> secondSet) {
         this.secondSet = secondSet;
     }
-
+    
     public List<Set<String>> getThirdSet() {
         return thirdSet;
     }
-
+    
     public void setThirdSet(List<Set<String>> thirdSet) {
         this.thirdSet = thirdSet;
+    }
+
+    public Grammar getOldGrammar() {//NEW
+        return oldGrammar;
+    }
+
+    public void setOldGrammar(Grammar oldGrammar) {//NEW
+        this.oldGrammar = oldGrammar;
     }
 
 }

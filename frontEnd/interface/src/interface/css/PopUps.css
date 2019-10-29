@@ -2,6 +2,14 @@
     font-size : 1.5em;
 }
 
+.AccordTrigger > i.fa.fa-question-circle.popbtn {
+    color: black;
+}
+
+.AccordTrigger > i.fa.fa-question-circle.popbtn:hover {
+    color: rgb(8, 199, 247);
+}
+
 .AccordModal {
     position: fixed;
     left: 0;
@@ -13,6 +21,7 @@
     visibility: hidden;
     transform: scale(1.1);
     transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+    overflow-y: initial !important;
 }
 .AccordModal-content {
     position: absolute;
@@ -21,9 +30,17 @@
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 1rem 1.5rem;
-    width: 24rem;
     border-radius: 0.5rem;
+    height: 25VH;
+    overflow-y: auto;
+    width: 20VW;
+    font-weight: initial;
 }
+
+.AccordModal-content.reach {
+    height: 18VH;
+}
+
 .close-bttn {
     float: right;
     width: 1.5rem;
@@ -34,11 +51,16 @@
     background-color: lightgray;
 }
 .close-bttn:hover {
-    background-color: darkgray;
+    background-color: rgb(250, 240, 240);
 }
 .show-AccordModal {
     opacity: 1;
     visibility: visible;
     transform: scale(1.0);
     transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.popUpAccord {
+    justify-content: center;
+    display: flex;
 }
