@@ -3,6 +3,7 @@ import DataService from "../service/DataService";
 import { withRouter } from "react-router-dom";
 import {Popover, OverlayTrigger, ButtonToolbar} from "react-bootstrap";
 import { Alert } from 'reactstrap';
+import Popup from '../component/Popup';
 
 import './css/Main.css';
 import HistoricoIcon from "../img/tempo-restante.svg";
@@ -17,15 +18,16 @@ import "./css/ShakeInfoButton.css";
 import "../../node_modules/font-awesome/css/font-awesome.css";
 import "./css/PopUps.css";
 
+import Content from "../component/Content";
+
 class Main extends Component {
     
     constructor (props) {
         super(props);
-
+        console.log("MAIN: " + this.props.mainOpacity + " " + this.props.mainPointerEvents);
         this.timer = 0;
-
         this.state = {
-            palavra: "",
+            word: "",
             variables: "",
             vari: {
                 varHTML: "",
@@ -34,6 +36,9 @@ class Main extends Component {
                 varNC: "",
                 varOT: "",
                 varOR: "",
+                varIdGr: "",
+                varRemRecDir: "",
+                varCYK: ""
             },
             grammarV: "",
             grammarE: "",
@@ -50,25 +55,23 @@ class Main extends Component {
                 lNonCascade : ["No chain rules","Sem regras da cadeia"],
                 lOnlyTerm : ["Only terminals","Apenas terminais"],
                 lOnlyReach : ["Only reacheable","Apenas alcançáveis"],
-                ltextBox: ["Input Grammar: ","Gramática de entrada: "],
+                lIdGrammar: ["Grammar Identification", "Identificação da Gramática"],
+                limmedLeftRecursion: ["Removal of Direct Left Recursion", "Remoção de Recursão Direta"],
+                lCYK: "CYK",
+                descToggleLambda: ["point", "ponto"],
+                descToggleGrammar : ["click me", "Clique aqui"],
+                arrow: ["arrow", "seta"],
+                descToggleArrow: "->",
                 lSolutionCompleteNRIS: "",
                 lSolutionCompleteENC: "",
                 lSolutionCompleteNC: "",
-                lSolutionCompleteOT: ""
+                lSolutionCompleteOT: "",
+                lSolutionCompleteRemRecDir: ""
+            },
 
-            },
-            display: {
-                displayNRIS: false,
-                displayENC: false,
-                displayNC: false,
-                displayOT: false,
-                displayOR: false
-            },
             lang: "en",
-            historico: null,
-            buttonLambda: this.props.lambda,
-            buttonGrammar: this.props.grammar,
-            buttonArrow: this.props.arrow,
+            activateOtherPage: null,
+            diplayPop: "none",
 
             seconds: 0,
             buttonInfoShake: "freeze",
@@ -78,20 +81,33 @@ class Main extends Component {
 
             menssage: "is empty field grammar",
 
-            visibleSolutionNRIS: "none",
-            visibleSolutionENC: "none",
-            visibleSolutionNC: "none",
-            visibleSolutionOT: "none",
-            visibleSolutionOR: "none"
+            // visibleSolutionNRIS: "none",
+            // visibleSolutionENC: "none",
+            // visibleSolutionNC: "none",
+            // visibleSolutionOT: "none",
+            // visibleSolutionOR: "none",
+            user: {
+                id: this.props.user.id,
+                name: this.props.user.name,
+                email: this.props.user.email,
+                dateCreation: this.props.user.dateCreation,
+                historicalGrammar: this.props.user.historicalGrammar
+            },
+            mainOpacity: this.props.mainOpacity,
+            mainPointerEvents: this.props.mainPointerEvents,
+            showPopup: false,
+            stepHeight: ["3.5em", "3.5em", "3.5em", "3.5em", "3.5em", "3.5em"],
+            stepOverflowY: ["hidden", "hidden", "hidden", "hidden", "hidden", "hidden"]
         };
 
         this.onSubmit = this.onSubmit.bind(this);
-        this.onSubmitNonRecursiveInitialSymbol = this.onSubmitNonRecursiveInitialSymbol.bind(this);
         this.onChange = this.onChange.bind(this);
         this.validation = this.validation.bind(this);
-
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
+        this.writeHist = this.writeHist.bind(this);
+        this.historicoFunction = this.historicoFunction.bind(this);
+        this.clickStep = this.clickStep.bind(this);
     }
     
     onChange(values) {
@@ -117,7 +133,6 @@ class Main extends Component {
             this.setState( {variables : values});
 
             tempGrammar = values;
-            console.log("AQIO VAR : " + tempGrammar + " " + values);
         }
         
         console.log("BACKUP : " + tempGrammar);
@@ -127,7 +142,6 @@ class Main extends Component {
         else this.setState({buttonValidationSubmit : "danger"});
     }
 
-   
     validation (text) {
 
         console.log("Validation " + text.length + " " + text);
@@ -147,7 +161,7 @@ class Main extends Component {
             let tmpR = rule.split("→");
             if ((tmpR[0] === rule) || (tmpR.length > 2)) {
                 console.log("2 if: " + (tmpR[0] === rule) + " " + (tmpR.length > 2) +
-                " " + "len : " + tmpR.length + " rule: " + rule + "\n");
+                " len : " + tmpR.length + " rule: " + rule + "\n");
                 console.log("tmpR: " + tmpR);
 
                 if (this.state.lang === "pt")
@@ -181,14 +195,54 @@ class Main extends Component {
             }
             
         }
+        
+        // Lista das Variáriaveis da regra da esquerda
+        let tmp = rules[0].split("→");
+        //let tmp2 = tmp[1].split("|");
+        
+        let rightSide = [];
+        for (let rule of rules) {
+            let aux = rule.replace(/ /g,'');
+            console.log("aux: " + aux);
+            aux = aux.split("→");
+            if (aux.length > 1){
+                aux = aux[1].split("|");
+                for (let v of aux){
+                    rightSide.push(v);
+                }
+            }
+        }
+        
+        let variablesTemp = [];
+        let popped;
+        for (let r of rules) {
+            tmp = r.split("→");
+            variablesTemp.push(tmp[0].trim());
+        }
+        variablesTemp.reverse();
+        popped = variablesTemp.pop();
 
         //Lista de regra da direita do S -> A 
         let listRule = [];
-        let tmp = rules[0].split("→");
-        let tmp2 = tmp[1].split("|");
-        for (let v of tmp2) {
+        let leftSide = variablesTemp;
+        leftSide.push(popped);
+        let eqif = 1;
+        for (let v of rightSide) {
+            for (let l of v) {
+                console.log("LETTER : " + l)
+                console.log("1ª: " + (l.toUpperCase() === l) );
+                console.log("2ª: " + !leftSide.includes(l));
+                console.log("3ª: " + !(/[0-9]/ !== l));
+                if (l.toUpperCase() === l && !leftSide.includes(l) &&!(/[0-9]/.test(l))) {
+                    console.log("RIGHTSide: " + l);
+                    eqif = 0;
+                }
+            }
+        }
+        
+        /*for (let v of tmp2) {
             let elem = v.trim();
-            if (elem.toUpperCase() === elem)
+            if (elem.toUpperCase() === elem && popped !== elem)//se entra no if, o botão fica vermelho
                 listRule.push(v.trim());
             else if (elem.length > 1) {
                 for (let l of elem) {
@@ -196,27 +250,20 @@ class Main extends Component {
                         listRule.push(l.trim());
                 }
             }
-        }
-
-        // Lista das Variáriaveis da regra da esquerda
-        let variablesTemp = [];
-        for (let r of rules) {
-            tmp = r.split("→");
-            variablesTemp.push(tmp[0].trim());
-        }
-        variablesTemp.reverse();
-        variablesTemp.pop();
+        }*/
 
         console.log("ListLeft : " + variablesTemp + "TAM : " + variablesTemp.length);
         console.log("listRule : " + listRule + "TAM: " + listRule.length);
-        let eqif = listRule.every(elem => variablesTemp.includes(elem));
+        //let eqif = listRule.every(elem => variablesTemp.includes(elem));
         console.log("Elements is equals: " + eqif);
 
         if (!eqif) {
             let subtractionElem = [];
 
             listRule.every( elem => {
-                if (!variablesTemp.includes(elem)){subtractionElem.push(elem); }} );
+                if (!variablesTemp.includes(elem)){subtractionElem.push(elem); }
+                return 0;
+            } );
             console.log("5 if");
             if (this.state.lang === "pt")
                 this.setState({menssage: `Sua gramática não está definido ${subtractionElem.toString()}
@@ -231,25 +278,47 @@ class Main extends Component {
     }
  
     historicoFunction() {
-        try {
-            alert(this.state.historico[0] + "\n" + this.state.historico[1]);
-        } catch (error) {
-            alert("Sem Dados");
-        }
+        console.log("Historical Grammar : " + this.state.user.historicalGrammar.length);
+        if (this.state.user.historicalGrammar.length > 0) {
+            let grString = [];
+            console.log(this.state.user.historicalGrammar[0].grammar);
+            console.log("AQUIBDUBA" + this.state.user.historicalGrammar + " " 
+            + this.state.user.historicalGrammar.length);
+            for (let hg of this.state.user.historicalGrammar) {
+                console.log("Tets: " + hg);
+                grString.push(<div dangerouslySetInnerHTML={{__html:
+                            "<button className='btn btn-primary'>WordInput: " + hg.wordInput + "<br/>" +
+                                "GrammarInput: " + hg.grammar + "<br/><br/></button>"}}
+                onClick={_ => this.writeHist(hg)} ></div>);
+            }
+            console.log("Tets: " + grString);
+            return grString;
+        } else return "Sem Dados";
+    
     }
-     
+    
+    writeHist(hg){
+        console.log("nao ta entrando aki" + hg.wordInput + " " + hg.grammar);
+        this.togglePopup();
+        // this.onChange(gram);
+        this.setState({variables: hg.grammar,
+                        word: hg.wordInput,
+                        buttonValidationSubmit : "success"
+                        });
+    }
+    
     onSubmit (values) {
 
         console.log("Validation Button : " + this.state.buttonValidationSubmit);
         if (this.state.buttonValidationSubmit === "success") {
-            if (values.palavra === "") {
-                values.palavra = "a";
+            if (values.word === "") {
+                values.word = " ";
             }
             
             let dados = {
-                palavra: values.palavra,
+                word: values.word,
                 variables: values.variables,
-                historico: values.variables,
+                activateOtherPage: values.variables,
                 lang: this.state.lang
             };
     
@@ -257,21 +326,31 @@ class Main extends Component {
     
             this.setState({variables: dados.variables});
             
-            this.setState({historico: dados.historico});
+            this.setState({activateOtherPage: dados.activateOtherPage});
     
-            this.setState({palavra: dados.palavra});
+            this.setState({word: dados.word});
     
+            let hg = {
+                grammar: dados.variables,
+                wordInput: dados.word,
+            }
     
             DataService.criaHTML(dados)
-                
+                .then(
+                    DataService.postSaveHistoricalGr(this.state.user.email, hg)
+                        .then(
+                            response => {
+                                this.setState({user: response.data});
+                                console.log("USER with HG : " + this.state.user.id + " " + 
+                                this.state.user.email + " " + this.state.user.dateCreation + " " + 
+                                this.state.user.historicalGrammar);
+                            }
+                        )
+                )
                 .then(
                     response => {
                         console.log(response.data);
                         
-                        // this.state.historico.push(
-                        //     "palavra : " + dados.palavra + "\n" +
-                        //     "Gramática : " + dados.variables + "\n"
-                        // );
                         let vetV = "{";
                         let count = 0;
                         for (let elem of response.data[1]){
@@ -309,13 +388,8 @@ class Main extends Component {
                         }
                         vetP+="}";
                         this.setState({varHTML: <div className="grammarInput">
-                                <br/><div style={{"font-size": "20px",
-                                                "border": "1px solid black",
-                                                "text-align": "center",
-                                                "width": "30VH"
-                                                }}
-                                dangerouslySetInnerHTML={{__html: this.state.displayLang.ltextBox[this.state.index] + "<br/>" 
-                                    + response.data[0][1] }}/><br/></div>,
+                                <br/><div style={{"font-size":"124%"}} dangerouslySetInnerHTML={{__html: '<h4>G:</h4><ul style="list-style-type:none"><li>' +
+                                response.data[0][1] +"</li></ul>" }}/><br/></div>,
                                 grammarV: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetV}}></div>,
                                 grammarE: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetE}}></div>,
                                 grammarP: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: vetP}}></div>,
@@ -339,29 +413,19 @@ class Main extends Component {
     */
     onSubmitNonRecursiveInitialSymbol (values) {
         let dados = {
-            palavra: values.palavra,
+            word: values.word,
             variables: values.variables
         };
         
-        // this.state.historico.push(
-        //     "palavra : " + dados.palavra + "\n" +
-        //     "Gramática : " + dados.variables + "\n"
-        //     );
-        
+       
         DataService.criaNonRecursiveInitial(dados)
             
             .then(
                 response => {
                     console.log(response.data);
-                    
-                    // this.state.historico.push(
-                    //     "palavra : " + dados.palavra + "\n" +
-                    //     "Gramática : " + dados.variables + "\n"
-                    // );
-                    // this.setState({variables: response.data[2]});
-
+           
                     this.setState({varNRIS: <div> <br/>                   
-                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /><br/></div>,
+                    <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
                     lSolutionCompleteNRIS: <div className="popUpAccord">
                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
                 }
@@ -376,26 +440,15 @@ class Main extends Component {
     onSubmitNonContracting (values) {
         console.log("Non Contracting: " + values);
         let dados = {
-            palavra: values.palavra,
+            word: values.word,
             variables: values.variables
         };
-        
-        // this.state.historico.push(
-        //     "palavra : " + dados.palavra + "\n" +
-        //     "Gramática : " + dados.variables + "\n"
-        //     );
-        
+         
         DataService.criaNonContracting(dados)
             .then(
                 response => {
                     console.log("Non Contracting: " + response.data);
                     
-
-                    // this.state.historico.push(
-                    //     "palavra : " + dados.palavra + "\n" +
-                    //     "Gramática : " + dados.variables + "\n"
-                    // );
-                    // this.setState({variables: response.data[2]});
 
                     this.setState({varENC: <div><br/>
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
@@ -408,7 +461,7 @@ class Main extends Component {
     onSubmitNonCascade (values) {
         console.log("Non Cascade: " + values);
         let dados ={
-            palavra: values.palavra,
+            word: values.word,
             variables: values.variables
         };
         
@@ -431,7 +484,7 @@ class Main extends Component {
     onSubmitOnlyTerm (values) {
         console.log("Only TERM values: " + values);
         let dados ={
-            palavra: values.palavra,
+            word: values.word,
             variables: values.variables
         };
         
@@ -453,7 +506,7 @@ class Main extends Component {
     onSubmitOnlyReach (values) {
         console.log("Only REACH: " + values);
         let dados ={
-            palavra: values.palavra,
+            word: values.word,
             variables: values.variables
         };
         
@@ -471,6 +524,68 @@ class Main extends Component {
         );
     }
 
+    onRequestIdGrammar(values) {
+        console.log("Grammar Identification: " + values);
+        let dados ={
+            word: values.word,
+            variables: values.variables
+        };
+
+        console.log("palavra: " + dados.word);
+        DataService.criaGrId(dados).then(
+            response => {
+                console.log("GRaID: " + response.data[0] + response.data[0]);
+
+                this.setState({varIdGr: <div>
+                    <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>
+                     });
+
+            }
+        )
+    }
+
+    onSubmitImmedLeftRecursion(values) {
+        console.log("onSubmitImmedLeftRecursion: " + values);
+        let dados ={
+            word: values.word,
+            variables: values.variables
+        };
+        
+        DataService.createRemovingTheImmediateLeftRecursion(dados).then(
+            response => {
+                console.log("onSubmitImmedLeftRecursion: " + response.data);
+                
+                // this.setState({variables: response.data[2]});
+                this.setState({varRemRecDir: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>,
+                    lSolutionCompleteRemRecDir: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
+            }
+        );
+    }
+
+
+    onSubmitCYK(values) {
+        console.log("onSubmitImmedLeftRecursion: " + values);
+        let dados ={
+            word: values.word,
+            variables: values.variables
+        };
+        
+        DataService.createCYK(dados).then(
+            response => {
+                console.log("CYK: " + response.data);
+                
+                // this.setState({variables: response.data[2]});
+                this.setState({varCYK: <div>
+                    <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>});
+            }
+        );
+    }
+
+
+
 
     componentDidMount () {
         let lang = navigator.languages;
@@ -484,8 +599,6 @@ class Main extends Component {
         //         .then(
         //             response => {
         //                 console.log(response);
-        //                 this.state.historico.push("Gramática: " + response.data + "\n");
-        //                 // this.setState({variables: response.data});
         //             }
         //         );
         //     DataService.getGramaticaHTML()
@@ -500,38 +613,78 @@ class Main extends Component {
 
     }
 
+    componentDidUpdate(prevProps) {
+        
+        if ((this.props.mainOpacity !== prevProps.mainOpacity)
+        || this.props.mainPointerEvents !== prevProps.mainPointerEvents) {
+            this.setState({user: this.props.user,
+                mainOpacity: this.props.mainOpacity,
+                mainPointerEvents: this.props.mainPointerEvents
+                            })
+        }
+    }
+
     startTimer() {
         if (this.state.seconds === 0) {
           this.timer = setInterval(this.countDown, 1000);
         }
-      }
+    }
     
-      countDown() {
+    countDown() {
         // Remove one second, set state so a re-render happens.
         let secondsCount = this.state.seconds + 1;
         this.setState({seconds: secondsCount});
         
         // Check if we're at zero.
         if (secondsCount === 2) { 
-          clearInterval(this.timer);
-          this.setState({
-              buttonInfoShake: "freeze",
-              seconds: 0
-          });
+            clearInterval(this.timer);
+            this.setState({
+                buttonInfoShake: "freeze",
+                seconds: 0
+            });
         }
-      }
+    }
+    
+    togglePopup() {
+        this.setState({
+            showPopup: !this.state.showPopup
+        });
+    }
+    
+    clickStep(i) {
+        let stepH = this.state.stepHeight.slice();
+        let stepO = this.state.stepOverflowY.slice();
+        if(stepH[i] === "3.5em"){
+            stepH[i] = "17em";
+            stepO[i] = "scroll";
+        }
+        else{
+            document.getElementById("i"+i).scrollTo(0, 0);
+            stepH[i] = "3.5em";
+            stepO[i] = "hidden";
+        }
+        this.setState({
+            stepHeight: stepH,
+            stepOverflowY: stepO
+        });
+    }
     
     render() {
 
-        if (!this.state.historico) {
-            console.log("AQUI !!!");
+        if (!this.state.activateOtherPage) {
+
             return (
                 <React.Fragment>
                     <Alert color="danger" isOpen={this.state.visibleAlert} toggle={_ => this.setState({visibleAlert: false})}>
                         {this.state.menssage}
                     </Alert>
-                    <div className="row body">
-                        <div className="col-12 col-sm-8" id="text-area">
+
+                    <div style={{display:this.state.diplayPop}}>
+                        <Content close={_ => this.setState({diplayPop : "none"})} numImg={this.state.numG}/>
+                     </div>
+                    <div className="row body" id="main-body" style={{opacity: this.state.mainOpacity, pointerEvents: this.state.mainPointerEvents}}>
+                        <div className="col-lg-4 col-md-3 col-sm-0"></div>
+                        <div className="col-12 col-sm-8 col-lg-3 col-md-4" id="text-area">
                             <div className="gramatica">
                                 <p>
                                     {this.state.displayLang.lGrammar[this.state.index]}: <br/>
@@ -543,52 +696,84 @@ class Main extends Component {
                             <br/>
                             <div className="palavra">
                                 <p><input placeholder={this.state.displayLang.lWord[this.state.index] + " (" + this.state.displayLang.lDeion[this.state.index]+")" }
-                                name="palavra" className="campo" value={this.state.palavra} 
-                                onChange={event => this.setState({palavra : event.target.value})} /></p> <br/>
+                                name="palavra" className="campo campo-palavra" value={this.state.word} 
+                                onChange={event => this.setState({word : event.target.value})} /></p> <br/>
                             </div>
                         </div>
-                        <div className="col-12 col-sm-4">
+                        <div className="col-12 col-sm-4 col-md-3 col-lg-2">
 
                             <section className="submit-div">
 
                                 <div className="submit-button">
-                                    <button type="button" className={`btn btn-${this.state.buttonValidationSubmit} btn-m btn-b`} id="ok"
+                                    <button type="button" className={`btn btn-success ${this.state.buttonValidationSubmit} btn-m btn-b`} id="ok"
                                     onClick={_ => this.onSubmit(this.state)}>{this.state.displayLang.lSubmit[this.state.index]}</button>
                                 </div>
                 
                                 
                                     <ButtonToolbar>
-                                        <OverlayTrigger trigger="click" key="top" placement="top"
+                                        <OverlayTrigger 
+                                        trigger={'focus'} key="top" placement="top"
                                         overlay={
                                             <Popover id="popover-positioned-top">
                                                 <Popover.Title as="div">Tutorial</Popover.Title>
                                                     <Popover.Content>
                                                         <div class="btn-group-toggle" data-toggle="buttons">
-                                                            {this.state.buttonGrammar}
+                                                            
+                                                            <button className="btn btn-secondary btnLabel"onClick={ _ => {
+                                                                this.setState({diplayPop: "block", numG: 1}) }  }>
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>{this.state.displayLang.lGrammar[this.state.index]}
+                                                                    <span className="tooltiptext">
+                                                                        {this.state.displayLang.descToggleGrammar[this.state.index]} 
+                                                                    </span>
+                                                                </div>
+                                                            </button>
 
-                                                            {this.state.buttonLambda}
+                                                            <button className="btn btn-secondary btnLabel" onClick={ _ => {
+                                                                this.setState({diplayPop: "block"}) } }>
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>Lambda
+                                                                    <span className="tooltiptext">
+                                                                        {this.state.displayLang.descToggleLambda[this.state.index]}
+                                                                    </span>
+                                                                </div>
+                                                            </button>
                                                                 
-                                                            {this.state.buttonArrow}
+                                                            <button className="btn btn-secondary btnLabel"onClick={ _ => {
+                                                                this.setState({diplayPop: "block", numG: 2}) }  }>
+                                                                <div className="tooltiphtml">
+                                                                    <input type="radio" name="options" id="option1" autocomplete="off"/>{this.state.displayLang.arrow[this.state.index]}
+                                                                    <span className="tooltiptext">
+                                                                        {this.state.displayLang.descToggleArrow} 
+                                                                    </span>
+                                                                </div>
+                                                            </button>
                                                         </div>
                                                     </Popover.Content>
                                             </Popover>
                                         }>
-                                            <div className={`shake-slow shake-${this.state.buttonInfoShake} `}>
-                                                <button type="button" className="btn btn-info btn-m" title="Tutorial">
+                                            <div className={`btn-m shake-slow shake-${this.state.buttonInfoShake} `}>
+                                                <button type="button" className="btn btn-info" title="Tutorial">
                                                     <b id="lambda"> <img alt="" src={InfoIcon} width="24"/> </b>
                                                 </button>
                                             </div>
                                         </OverlayTrigger>
                                     </ButtonToolbar>
 
-                                <div className = "">
-                                    <button type = "button" className = "btn btn-time btn-m" onClick={this.historicoFunction}><img alt="" src={HistoricoIcon} width="24"/></button>
+                                <div className = "hist-popup">
+                                    <button type = "button" className = "btn btn-time btn-m" onClick={/*this.historicoFunction*/this.togglePopup.bind(this)}><img alt="" src={HistoricoIcon} width="24"/></button>
+                                    {this.state.showPopup ?
+                                    <Popup className="hist-popup" text={this.historicoFunction()} closePopup={this.togglePopup.bind(this)} />
+                                    : null
+                                    }
                                 </div>
                                
                             </section>
                         </div>
-
+                        <div className = "col-sm-0 col-md-1 col-lg-2"></div>
+                        
                     </div>
+                    
                 </React.Fragment>
                 
                 
@@ -598,7 +783,7 @@ class Main extends Component {
             
             return(
                 <React.Fragment>
-                    <div className="container grid grid-template-columns-5 conteudo">
+                    <div className="container grid grid-template-columns-5 conteudo" id="gramDesc">
                         <div className="item G">
                         </div>
                         <div className="item V">
@@ -615,16 +800,29 @@ class Main extends Component {
                         </div>
                     </div>
                     <br/>
-                    {this.state.varHTML}
+                    {/*{this.state.varHTML}*/}
                     <br/>
                     <div className="container grid grid-template-columns-3 conteudo">
+
+                        <div className="item">
+                            <Accordion 
+                                title={this.state.displayLang.lIdGrammar[this.state.index]}
+                                onToggle={_ => this.onRequestIdGrammar(this.state)}>
+                                    <p>{this.state.varIdGr}</p>
+                            </Accordion>
+                        </div>
                         
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lInitialNonRec[this.state.index]}
                                 onToggle={_ => this.onSubmitNonRecursiveInitialSymbol(this.state)}>
-                                    {this.state.varNRIS}
-                                <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNRIS: "block"}) } >
+                                    <div className="internal-gram">
+                                        {this.state.varNRIS}
+                                    </div>
+                                    <div className="Internal i0" onClick={_ => this.clickStep(0)} style={{height: this.state.stepHeight[0], "overflow-y": this.state.stepOverflowY[0]}}>
+                                        {this.state.lSolutionCompleteNRIS}
+                                    </div>
+                                {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNRIS: "block"}) } >
                                     <i className="fa fa-question-circle popbtn"></i> </div>
                                 <div className="AccorModal" style={{display: `${this.state.visibleSolutionNRIS}`}}>
                                     <div className="AccordModal-content">
@@ -632,85 +830,133 @@ class Main extends Component {
                                         onClick={_ => this.setState({visibleSolutionNRIS: "none"}) }>X</span>
                                         {this.state.lSolutionCompleteNRIS}
                                     </div>
-                                </div>
+                                </div> */}
                             </Accordion>
-                            
                         </div>
 
                         <div className="item">
                         <Accordion 
                             title={this.state.displayLang.lEsseniallyNonContract[this.state.index]}
                             onToggle={_ => this.onSubmitNonContracting(this.state)}>
-                                {this.state.varENC}
-                                <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionENC: "block"}) } >
+                                <div className="internal-gram">
+                                        {this.state.varENC}
+                                    </div>
+                                {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionENC: "block"}) } >
                                     <i className="fa fa-question-circle popbtn"></i> </div>
                                 <div className="AccorModal" style={{display: `${this.state.visibleSolutionENC}`}}>
                                     <div className="AccordModal-content">
                                         <span className="close-bttn"
-                                        onClick={_ => this.setState({visibleSolutionENC: "none"}) }>X</span>
+                                        onClick={_ => this.setState({visibleSolutionENC: "none"}) }>X</span> */}
+                                <div className="Internal" id="i1" onClick={_ => this.clickStep(1)} style={{height: this.state.stepHeight[1], "overflow-y": this.state.stepOverflowY[1]}}>
                                         {this.state.lSolutionCompleteENC}
-                                    </div>
                                 </div>
+                                
+                                    {/* </div>
+                                </div> */}
                         </Accordion>
                             
                         </div>
                         
+                    </div>
+                    <div className="container grid grid-template-columns-3 conteudo">
+
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lNonCascade[this.state.index]}
                                 onToggle={_ =>this.onSubmitNonCascade(this.state)}>
-                                    {this.state.varNC}
-                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNC: "block"}) } >
+                                    <div className="internal-gram">
+                                        {this.state.varNC}
+                                    </div>
+                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNC: "block"}) } >
                                         <i className="fa fa-question-circle popbtn"></i> </div>
                                     <div className="AccorModal" style={{display: `${this.state.visibleSolutionNC}`}}>
                                         <div className="AccordModal-content">
                                             <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionNC: "none"}) }>X</span>
-                                            {this.state.lSolutionCompleteNC}
-                                        </div>
+                                            onClick={_ => this.setState({visibleSolutionNC: "none"}) }>X</span> */}
+                                    <div className="Internal" id="i2" onClick={_ => this.clickStep(2)} style={{height: this.state.stepHeight[2], "overflow-y": this.state.stepOverflowY[2]}}>
+                                        {this.state.lSolutionCompleteNC}
                                     </div>
+                                    {/* </div>
+                                    </div> */}
                             </Accordion>
                             
                         </div>
-                    </div>
-                    <div className="container grid grid-template-columns-3 conteudo">
+
+
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lOnlyTerm[this.state.index]}
                                 onToggle={_ =>this.onSubmitOnlyTerm(this.state)}>
-                                    {this.state.varOT}
-                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOT: "block"}) } >
+                                    <div className="internal-gram">
+                                        {this.state.varOT}
+                                    </div>
+                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOT: "block"}) } >
                                         <i className="fa fa-question-circle popbtn"></i> </div>
                                     <div className="AccorModal" style={{display: `${this.state.visibleSolutionOT}`}}>
                                         <div className="AccordModal-content">
                                             <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionOT: "none"}) }>X</span>
-                                            {this.state.lSolutionCompleteOT}
-                                        </div>
+                                            onClick={_ => this.setState({visibleSolutionOT: "none"}) }>X</span> */}
+                                    <div className="Internal" id="i3" onClick={_ => this.clickStep(3)} style={{height: this.state.stepHeight[3], "overflow-y": this.state.stepOverflowY[3]}}>
+                                        {this.state.lSolutionCompleteOT}
                                     </div>
+                                            
+                                        {/* </div>
+                                    </div> */}
                             </Accordion>
                         
                         </div>
-                        
+                    
                         <div className="item">
                             <Accordion 
                                 title={this.state.displayLang.lOnlyReach[this.state.index]}
                                 onToggle={_ => this.onSubmitOnlyReach(this.state)}>
-                                    {this.state.varOR}
-                                    <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOR: "block"}) } >
+                                    <div className="internal-gram">
+                                        {this.state.varOR}
+                                    </div>
+                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOR: "block"}) } >
                                         <i className="fa fa-question-circle popbtn"></i> </div>
                                     <div className="AccorModal" style={{display: `${this.state.visibleSolutionOR}`}}>
                                         <div className="AccordModal-content reach">
                                             <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionOR: "none"}) }>X</span>
-                                            {this.state.lSolutionCompleteOR}
-                                        </div>
+                                            onClick={_ => this.setState({visibleSolutionOR: "none"}) }>X</span> */}
+                                    <div className="Internal" id="i4" onClick={_ => this.clickStep(4)} style={{height: this.state.stepHeight[4], "overflow-y": this.state.stepOverflowY[4]}}>
+                                        {this.state.lSolutionCompleteOR}
                                     </div>
+                                            
+                                        {/* </div>
+                                    </div> */}
                             </Accordion>
-
                         </div>
-                
+
                     </div>
+
+                    <div className="container grid grid-template-columns-3 conteudo">
+                        <div className="item">
+                                <Accordion 
+                                    title={this.state.displayLang.limmedLeftRecursion[this.state.index]}
+                                    onToggle={_ => this.onSubmitImmedLeftRecursion(this.state)}>
+                                        <div className="internal-gram">
+                                            {this.state.varRemRecDir}
+                                        </div>
+                                        
+                                        <div className="Internal" id="i5" onClick={_ => this.clickStep(5)} style={{height: this.state.stepHeight[5], "overflow-y": this.state.stepOverflowY[5]}}>
+                                            {this.state.lSolutionCompleteRemRecDir}
+                                        </div>
+                                </Accordion>
+                            </div>
+
+                            <div className="item cyk">
+                                <Accordion 
+                                    title={this.state.displayLang.lCYK}
+                                    onToggle={_ => this.onSubmitCYK(this.state)}>
+                                        <div className="internal-gram cyk">
+                                            {this.state.varCYK}
+                                        </div>
+                                </Accordion>
+                            </div>
+
+                        
+                        </div>
                     
                 </React.Fragment>
             );

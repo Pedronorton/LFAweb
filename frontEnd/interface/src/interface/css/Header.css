@@ -1,0 +1,81 @@
+.fa-user{
+    color: white;
+    cursor: pointer;
+    z-index: 2;
+}
+.span {
+    cursor: pointer;
+}
+
+.span:hover {
+    border: 2px solid white;
+    border-radius: 5px;
+}
+.fa.fa-home:hover {
+    color: rgb(4, 138, 247);
+}
+#user-menu{
+    z-index: 2;
+    position: absolute;
+    right: 1vw;
+    background-color: #1a1d20;
+    opacity: 1;
+    width: 80px;
+    color:#f9f5f5;
+    text-align: center;
+    border-radius: 6px;
+    padding: 9px 0;
+}
+
+#user-menu::after{
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #1a1d20 transparent;
+}
+#title{
+    margin-left: 0;
+}
+#profile{
+    margin-right: 0;
+}
+
+
+
+
+/* Tooltip container */
+.tooltiphtml .tooltiptext {
+    visibility: hidden;
+    width: 123px;
+    background-color: #000;
+    color: #f9f5f5;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    left: 64%;
+    margin-left: 39px;
+    margin-top: -10px;
+    /* left: 50%; */
+    
+}
+
+.tooltiphtml .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 42%;
+    right: 100%;
+    margin-top: -6px;
+    border-width: 11px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+}
+
+.tooltiphtml:hover .tooltiptext {
+    visibility: visible;
+}

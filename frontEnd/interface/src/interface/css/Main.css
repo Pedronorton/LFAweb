@@ -1,3 +1,6 @@
+#main-body{
+    margin-top: 5em;
+}
 .linha {
     margin-top: 3%;
 }
@@ -5,6 +8,12 @@
     text-align: left;
     padding-right: 5%;
     padding-left:5%;
+}
+.campo-palavra{
+    font-size: 10px;
+    height: 4em;
+    position: relative;
+    bottom: 0.4em;
 }
 .descricao{
     padding-top: 0;
@@ -17,10 +26,14 @@
     width: 100%;
 }
 .gramatica {
-    height: 14em;
+    height: 8em;
+    max-width: 100%;
 }
 .btn-m {
-    min-width: 15em;
+    width: 80%;
+}
+.btn-info {
+    width: 100%;
 }
 .grid {
     display: grid;
@@ -51,7 +64,7 @@
     min-height: 5em;
 }
 .G{
-    background-image: url("../../img/vsigmaps/g.jpg");
+    background-image: url("../../img/vsigmaps/g.png");
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -59,7 +72,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../img/vsigmaps/v.jpg");
+    background-image: url("../../img/vsigmaps/v.png");
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -67,7 +80,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../img/vsigmaps/sigma.jpg");
+    background-image: url("../../img/vsigmaps/sigma.png");
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -75,7 +88,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../img/vsigmaps/p.jpg");
+    background-image: url("../../img/vsigmaps/p.png");
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -83,7 +96,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("../../img/vsigmaps/s.jpg");
+    background-image: url("../../img/vsigmaps/s.png");
     background-position: right;
     background-repeat: no-repeat;
 }
@@ -96,22 +109,65 @@
 }
 
 .conteudo {
-    padding-right: 15px;
-    padding-left: 15px;
     grid-column-gap: 20px;
 }
 
-.Accordion {
-    border-radius: 10px;
+#gramDesc {
+    min-height: 10em;
 }
 
-  .Accordion__header { 
-    font-family: font-bold, Arial; 
-    border: 1px groove;
-    box-shadow: 1px 1px 1px black;
-    background: #353131;
-    font-size: small;
+div.Accordion {
+    border-radius: 10px 10px 0 0;
 }
+
+div.Accordion__body {
+    max-height: 25em;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+div.item.cyk .Accordion .Accordion__body {
+    width: 26VW;
+}
+
+div.Accordion__body.Accordion__body--collapsed{
+    height: 0;
+}
+
+.Internal {
+    cursor: pointer;
+    width: 100%;
+    background: rgba(0,0,0,.05);
+}
+.internal-gram{
+    height: 8em;
+    overflow-y: scroll;
+}
+
+.internal-gram.cyk {
+    height: 20em;
+}
+
+/*
+div .Accordion.Internal .Accordion__header {
+    background-color: grey;
+    width: auto;
+    height: auto;
+}
+
+div .Accordion.Internal .Accordion__header::after {
+    background: url(../../img/plus2.svg) no-repeat;
+    transition: transform 0.3s;
+    content: '';
+    width: 22px;
+    height: 24px;
+    display: inline-block;
+    position: absolute;
+    right: 15px;
+}
+*/
 
 .submit-div {
     text-align: left;
@@ -143,7 +199,7 @@
 }
 
 .btn-b {
-    height: 18.5em;
+    height: 9.5em;
 }
 
 .popover-info {
@@ -199,4 +255,17 @@ button#ok {
 .grammarInput {
     display: flex;
     justify-content: center;
+}
+
+.item {
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+.danger {
+    opacity: 0.45;
+}
+#accademic {
+    margin-bottom: 5em;
+}
+.hist-popup{
 }

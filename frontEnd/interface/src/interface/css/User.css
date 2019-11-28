@@ -1,0 +1,11 @@
+#body{
+	min-height: 80vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+#user-box{
+	border: solid rgba(85, 85, 85, 0.781) 0.1em;
+	border-radius: 0.5em;
+	padding: 3em;
+}

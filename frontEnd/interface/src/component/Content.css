@@ -1,3 +1,11 @@
+.borderModal {
+  position: fixed;
+  inset: 0px;
+  background:
+  rgba(0, 0, 0, 0.5) none repeat scroll 0% 0%;
+  display: flex;
+  z-index: 999;
+}
 .modal2 {
   font-size: 12px;
   margin-top: 28px;

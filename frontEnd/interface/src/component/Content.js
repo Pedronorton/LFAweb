@@ -8,6 +8,7 @@ import ArrowEn from "../img/arrow_en.gif";
 import ArrowPt from "../img/arrow_pt.gif";
 
 function Content ({ close, numImg }) {
+
     let imgFont = LambdaEn;
 
     let lang = navigator.languages;
@@ -18,13 +19,15 @@ function Content ({ close, numImg }) {
     if (numImg === 2) imgFont = (lang.includes("pt")) ? ArrowPt : ArrowEn;
 
     return (
-        <div className="modal2">
-          <button className="close" onClick={close}>
-            &times;
-          </button>
-          <div className="content">
-            <img src={imgFont} alt="" width="100%"/>
-          </div>
+        <div className="borderModal">
+            <div className="modal2">
+                <button className="close" onClick={close}>
+                    &times;
+                </button>
+                <div className="content">
+                    <img src={imgFont} alt="" width="100%"/>
+                </div>
+            </div>
         </div>
     );
 }

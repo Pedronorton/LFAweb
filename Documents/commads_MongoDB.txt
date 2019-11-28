@@ -1,0 +1,2 @@
+db.getCollection("User").find({})
+db.getCollection("User").drop()

@@ -1,0 +1,10 @@
+1º Create Database <name>;
+2º Test:
+Show Databases;
+
+
+- Para selecionar o Database e verificar a tabelas:
+1º use <name_database>;
+2º select database();
+3º show tables;
+4º describe <name_table>;

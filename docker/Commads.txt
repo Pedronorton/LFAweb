@@ -1,0 +1,8 @@
+Iniciar o container :
+docker ps -a
+
+Pegue o containerID e :
+docker start <containerID>
+
+Teste o MongoDB:
+mongo
