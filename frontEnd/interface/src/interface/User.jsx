@@ -1,8 +1,8 @@
 import React, {Component} from "react";
+import Cookie from "js-cookie";
 import Header from './Header.jsx';
 import "./css/User.css";
 import DataService from "../service/DataService";
-import publicIp from "public-ip";
 
 class User extends Component {
     
@@ -15,7 +15,7 @@ class User extends Component {
             userName: props.location.state.user.name,
             userEmail: props.location.state.user.email,
             creationDate: props.location.state.user.dateCreation,
-            myIP: null
+            credential: props.location.state.authorization
         };
 
         this.handleChangeEmail = this.handleChangeEmail.bind(this);
@@ -45,36 +45,61 @@ class User extends Component {
         };
         
         event.preventDefault();
-        DataService.updateUser(usr)
+        DataService.updateUser(usr, this.state.credential)
             .then(
                 response => {
                     this.setState({user: response.data})
                 }
+            ).catch(
+                error => {
+                    alert("Falha de atualização de dados ");
+                    Cookie.remove('token', { path: '/' });
+                    Cookie.remove('userMail', { path: '/' });
+                    window.location.href = "/";
+                }
             );
     }
     
-    deleteUser(usr, ip){
-        console.log("usr: " + usr.id + " " + usr.email + " " + usr.name + " " + usr.dateCreation);
-        console.log("ip: " + ip);
+    deleteUser(usr){
+
         if (window.confirm('Are you sure you want to delete your account from our database?')){
-            DataService.deleteUser(usr, ip)
+            DataService.deleteUser(usr, this.state.credential)
                 .then(
-                    response =>
-                        window.location.reload(false)
+                    response => {
+                        DataService.logout()
+                        .then(
+                            response => {
+                                this.props.history.push({
+                                    pathname: "/",
+                                    state: {credential: null}
+                                });
+                            }
+                        )
+                        .catch(
+                            error => {
+                                alert("Falha ao fazer logout");
+                                Cookie.remove('token', { path: '/' });
+                                Cookie.remove('userMail', { path: '/' });
+                                window.location.href = "/";
+                            }
+                        );
+                    }
+                ).catch(
+                    error => {
+                        alert("Falha ao apagar conta ");
+                        Cookie.remove('token', { path: '/' });
+                        Cookie.remove('userMail', { path: '/' });
+                        window.location.href = "/";
+                    }
                 );
         }
     }
-
-    async getIP () {
-        console.log("SÓ AQUI: " + await publicIp.v4());
-        return await publicIp.v4();
-    }
     
     render () {
-        this.getIP().then( response => this.setState({myIP: response}) );
+
         return (
         <React.Fragment>
-            <Header user={this.state.user} IP={this.state.myIP}/>
+            <Header headerUser={this.state.user} headerAuthorization={this.state.credential}/>
             <div id="body">
                 <div id="user-box">
                     <form onSubmit={event => this.handleSubmit(event)}>
@@ -101,9 +126,7 @@ class User extends Component {
                         </div>
                     </form>
                     <br/>
-                    {/* <div id="login-button">
-                        <button type="button" className="btn btn-danger" onClick={_ => this.deleteUser(this.state.user, this.state.myIP)}>DELETE</button>
-                    </div> */}
+
                 </div>
             </div>
         </React.Fragment>

@@ -1,5 +1,5 @@
 import React from "react";
-
+import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 
 function Test ({visible, solutionComplete}) {
    
@@ -8,7 +8,7 @@ function Test ({visible, solutionComplete}) {
     return(
         <div className="AccorModal overflow-auto" style={{display: `${visibleSolution}`}}>
             <div className="AccordModal-content">
-                <span className="close-bttn"
+                <span className="btn btn-secondary close-bttn"
                 onClick={_ => visibleSolution = "none" }>X</span>
                 {solvedClt}
             </div>

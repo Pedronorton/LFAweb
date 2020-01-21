@@ -1,93 +1,93 @@
 import Axios from "axios";
 
-const URL = "http://192.168.1.104:8080";
+const URL = "https://limitless-garden-05070.herokuapp.com";//"http://localhost:8080";
 
 class DataService {
 
-    criaNonRecursiveInitial (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/nonRecursiveInitial`, dados);
+    criaNonRecursiveInitial (dados, cred) {
+        return Axios.post(`${URL}/grammar/nonRecursiveInitial`, dados, cred);
     }
 
-    criaNonContracting (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/nonContracting`, dados);
-        }
-        
-    criaNonCascade (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/nonCascade`, dados);
-    }
-    
-    criaOnlyTerm (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/onlyTerm`, dados);
-    }
-    
-    criaOnlyReach (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/onlyReach`, dados);
+    criaNonContracting (dados, cred) {
+        return Axios.post(`${URL}/grammar/nonContracting`, dados, cred);
     }
 
-    criaGrId (dados) {
-        console.log("DADOS VAR: " + dados.variables);
-        console.log("DADOS WORD: " + dados.word);
-        return Axios.post(`${URL}/grammar/grammaId`, dados);
+    criaNonCascade (dados, cred) {
+        return Axios.post(`${URL}/grammar/nonCascade`, dados, cred);
     }
 
-    createRemovingTheImmediateLeftRecursion (dados) {
-        return Axios.post(`${URL}/grammar/immedLeftRecursion`, dados);
+    criaOnlyTerm (dados, cred) {
+        return Axios.post(`${URL}/grammar/onlyTerm`, dados, cred);
     }
 
-    createCYK (dados) {
-        return Axios.post(`${URL}/grammar/cyk`, dados);
+    criaOnlyReach (dados, cred) {
+        return Axios.post(`${URL}/grammar/onlyReach`, dados, cred);
     }
 
-    criaHTML (dados) {
-        return Axios.post(`${URL}/${dados.word}/grammar/HTML`, dados);
+    criaGrId (dados, cred) {
+        return Axios.post(`${URL}/grammar/grammaId`, dados, cred);
     }
 
-    getGramatica () {
-        return Axios.get(`${URL}/grammar`);
+    createChomsky (dados, cred) {
+
+        return Axios.post(`${URL}/grammar/chomSky`, dados, cred);
     }
 
-    getGramaticaHTML () {
-        return Axios.get(`${URL}/grammar/html`);
+
+    createRemovingTheImmediateLeftRecursion (dados, cred) {
+        return Axios.post(`${URL}/grammar/immedLeftRecursion`, dados, cred);
+    }
+
+    createCYK (dados, cred) {
+        return Axios.post(`${URL}/grammar/cyk`, dados, cred);
+    }
+
+
+
+    criaHTML (dados, cred) {
+        return Axios.post(`${URL}/a/grammar/HTML`, dados, cred);
+    }
+
+    getGramatica (cred) {
+        return Axios.get(`${URL}/grammar`, cred);
+    }
+
+    getGramaticaHTML (cred) {
+        return Axios.get(`${URL}/grammar/html`, cred);
     }
 
     //USER
-    getUserByEmail (email) {
-        return Axios.get(`${URL}/user/${email}`);
+
+    signUp (user) {
+        return Axios.post(`${URL}/signUp`, user);
     }
 
-    postSigLogUser (user, ip) {
-        return Axios.post(`${URL}/sign/${ip}`, user);
+    login(dataLogin) {
+        return Axios.post(`${URL}/login`, dataLogin);
     }
 
-    postSaveHistoricalGr (email, historicalGrammar) {
-        return Axios.post(`${URL}/${email}/user/grammar`, historicalGrammar);
+    logout () {
+        return Axios.put(`${URL}/logout`);
     }
 
-    updateUser (user) {
-        return Axios.put(`${URL}/user`, user);
+    getUserByEmail (email, cred) {
+        return Axios.get(`${URL}/user/${email}`, cred);
+    }
+
+    postSaveHistoricalGr (email, historicalGrammar, cred) {
+        console.log("HEADERS HISTORY:");
+        console.log(cred);
+        return Axios.post(`${URL}/${email}/user/grammar`, historicalGrammar, cred);
+    }
+
+    updateUser (user, cred) {
+        return Axios.put(`${URL}/user`, user, cred);
     }
     
-    deleteUser (user, ip) {
-        return Axios.delete(`${URL}/user/${ip}`, user);
+    deleteUser (user, cred) {
+        return Axios.delete(`${URL}/user`, user, cred);
     }
 
-    getConfirmUserLogged (IP) {
-        return Axios.get(`${URL}/login/${IP}`);
-    }
-
-    putLogout (IP) {
-        return Axios.put(`${URL}/logout/${IP}`);
-    }
 }
 
 export default new DataService();

@@ -25,7 +25,7 @@ function Content ({ close, numImg }) {
                     &times;
                 </button>
                 <div className="content">
-                    <img src={imgFont} alt="" width="100%"/>
+                    <img src={imgFont} alt="" width="75%"/>
                 </div>
             </div>
         </div>

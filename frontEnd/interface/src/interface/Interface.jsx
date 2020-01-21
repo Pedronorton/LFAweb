@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import Cookie from "js-cookie";
 import '../../node_modules/bootstrap/dist/css/bootstrap.css';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
@@ -9,77 +10,116 @@ import "./css/Interface.css";
 
 import { withRouter} from 'react-router-dom';
 
-import publicIp from "public-ip";
+function Interface(props) {
 
-function Interface() {
-
-    const [myIP, setmyIP] = useState(undefined);
-    getIP().then( response => setmyIP(response) );
-
-    console.log("Test1: " + myIP);
-
-    //const [loginStatus, setLoginStatus] = useState(0);
     const [loginDisplay, setLoginDisplay] = useState("block");
     const [interfacePointerEvents, setInterfacePointerEvents] = useState("none");
-    const [interfaceOpacity, setInterfaceOpacity] = useState(0.6);
+    const [interfaceOpacity, setInterfaceOpacity] = useState(0.8);
     const [opCityEmail, setOpCityEmail] = useState(0);
     const [user, setUser] = useState({id: null, email: "",  name: null, dateCreation: null, historicalGrammar: []});
+    const [credential, setCredential] = useState({headers: {Authorization: ""}});
 
     useEffect(() => {
+        if ( Cookie.get("token") !== undefined && 
+            (Cookie.get("token") !== credential.headers.Authorization) && 
+        (Cookie.get("userMail") !== user.email)) {
+            
+    
+            setInterfaceOpacity(1);
+            setLoginDisplay("none");
+            setInterfacePointerEvents("auto");
 
-        getIP().then( response =>  setmyIP(response));
-        console.log("test2: " + myIP);
-        if ((myIP !== undefined) && user.id == null) {
-            DataService.getConfirmUserLogged(myIP)
-            .then(
-                response => {
-                    console.log("loginStatus: " + response.data.id);
-                    if (response.data.id !== undefined) {
-                        setUser(response.data);
-                        setLoginDisplay("none");
-                        setInterfacePointerEvents("auto");
-                        setInterfaceOpacity(1);
-                    } else {
-                        setLoginDisplay("block");
-                        setInterfaceOpacity(0.6);
-                        setInterfacePointerEvents("none");
+
+            setCredential(
+                {
+                    headers: {
+                        Authorization: Cookie.get("token")
                     }
-                });
+                }
+            );
+
+            DataService.getUserByEmail(Cookie.get("userMail"), 
+            {
+                headers: {
+                    Authorization: Cookie.get("token")
+                }
+            })
+                .then(
+                    response => {
+                        setUser(response.data)
+                    }
+                )
+                .catch(
+                    error => {
+                        alert("Falha ao encontrar usuário !!!")
+                        Cookie.remove('token', { path: '/' });
+                        Cookie.remove('userMail', { path: '/' });
+                        window.location.href = "/";
+                    }
+                )
         }
     });
-
-    async function getIP () {
-        console.log("SÓ AQUI: " + await publicIp.v4());
-        return await publicIp.v4();
-    }
 
     function loginFunction() {
         if (opCityEmail === 1) {
  
 
             let usr = {
-                name: user.name,
+                name: (user.name === null | user.name === undefined)? 
+                    user.email.split('@')[0] : user.name,
                 email: user.email,
             };
         
-            console.log("USER : "+ usr.name + usr.email + " " + usr.dateCreation);
-         
-         
-
-            DataService.postSigLogUser(usr, myIP)
+            DataService.signUp(usr)
             .then(
                 response =>  {
 
-                        console.log("Return: " + response.data.id)
                         setUser(response.data);
-                        console.log("usr: " +  response.data.id + " " + response.data.email + " " + response.data.name + " " +
-                        response.data.dateCreation + " " + response.data.historicalGrammar);
-                        
-                        setInterfaceOpacity(1);
-                        setLoginDisplay("none");
-                        setInterfacePointerEvents("auto");
-                        console.log("FUNCIONOU");
 
+                        let data = {
+                            email: response.data.email,
+                            password: response.data.autho
+                        }
+
+                        Cookie.set("userMail", response.data.email);
+
+                        DataService.login(data)
+                            .then(
+                                response => {
+
+                                    setCredential( {
+                                            headers: {
+                                                Authorization: response.headers.authorization
+                                            }
+                                    } );
+
+                                    Cookie.set("token", response.headers.authorization);
+                                     
+
+                                    setInterfaceOpacity(1);
+                                    setLoginDisplay("none");
+                                    setInterfacePointerEvents("auto");
+
+                                }
+                            )
+                            .catch(
+                                error => {
+                                    alert("Falha de login ");
+                                    Cookie.remove('token', { path: '/' });
+                                    Cookie.remove('userMail', { path: '/' });
+                                    setUser({id: null, email: "",  name: null, 
+                                    dateCreation: null, historicalGrammar: []});
+                                    window.location.href="/";
+                                }
+                            )
+
+                }
+            ).catch(
+                error => {
+                    alert("Falha ao enviar dados de usuários");
+                    Cookie.remove('token', { path: '/' });
+                    Cookie.remove('userMail', { path: '/' });
+                    window.location.href = "/";
                 }
             );
             
@@ -88,17 +128,16 @@ function Interface() {
     }
     
     function onChangeEmail(value) {
-        console.log("Email: " + value)
+
         let arroba = value.split('@');
-        console.log("1ª: " + (arroba.length === 2) )
+
         if (arroba.length === 2) {
             let point = arroba[1].split('.');
-            console.log("2ª: " + (point.length > 2) +
-                " " + (point[1] !== "") + " " + (point[1] !== " "))
+
             if ((point.length >= 2) && (point[1] !== "") &&
                 (point[1] !== " ")) {
                     // Confirma se email existe no Login
-                    console.log("EMAILLogin: " + value);
+  
                     setOpCityEmail(1);
                     setUser({ email: value });
                 
@@ -106,8 +145,9 @@ function Interface() {
         } else setOpCityEmail(0);
         
     }
+
     function _handleKeyDown(event) {
-        console.log("ENTER" + event.key);
+
         if(event.key === 'Enter') {
             loginFunction();
         }
@@ -130,11 +170,12 @@ function Interface() {
                     </div>
                 </div>
             </div>
-            <Header user={user} headerOpacity={interfaceOpacity} 
-                IP={myIP} headerPointerEvents={interfacePointerEvents}/>
-            <Main user={user} mainOpacity={interfaceOpacity} mainPointerEvents={interfacePointerEvents}/>
+            <Header headerUser={user} headerOpacity={interfaceOpacity}
+                headerAuthorization={credential} headerPointerEvents={interfacePointerEvents}/>
+            <Main mainUser={user} mainOpacity={interfaceOpacity} mainPointerEvents={interfacePointerEvents}
+            mainAuthorization={credential}/>
         </React.Fragment>
     );
-    }
+}
 
 export default withRouter(Interface);

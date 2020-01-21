@@ -56,7 +56,10 @@
 }
 .grid-template-columns-3 {
     grid-template-columns: 1fr 1fr 1fr;
-    width: 100%;
+    width: 100vw;
+}
+.container{
+    max-width: 90vw;
 }
 .grid-template-columns-5 {
     grid-template-columns: 1.5fr 1fr 1fr 2.2fr 0.9fr;
@@ -121,19 +124,23 @@ div.Accordion {
 }
 
 div.Accordion__body {
-    max-height: 25em;
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 0;
 }
 
-div.item.cyk .Accordion .Accordion__body {
-    width: 26VW;
-}
 
 div.Accordion__body.Accordion__body--collapsed{
     height: 0;
+}
+div.Accordion .Accordion__body .cyk{
+    overflow-x:auto;
+    max-width: 26vw;
+    white-space: nowrap;
+}
+.cymk{
+    display: inline-block;
 }
 
 .Internal {
@@ -149,7 +156,19 @@ div.Accordion__body.Accordion__body--collapsed{
 .internal-gram.cyk {
     height: 20em;
 }
+/* .i-chomsky{
+    border: 1px white solid;
+} */
 
+div.container.grid.grid-template-columns-1.conteudo .item .Accordion
+.Accordion__body{
+    background-color:rgba(0,0,0,.05);
+}
+
+.internal-gram-c{
+    height: 11.5em;
+    overflow-y: scroll;
+}
 /*
 div .Accordion.Internal .Accordion__header {
     background-color: grey;
@@ -267,5 +286,29 @@ button#ok {
 #accademic {
     margin-bottom: 5em;
 }
-.hist-popup{
+
+.grid-template-columns-2 {
+    grid-template-columns: 1fr 1fr;
+    width: 100vw;
+}
+
+.accordion_chomsky_internal {
+    border-radius: 10px 10px 0 0;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    position: relative;
+    overflow: hidden;
+	background: #3d3d3d;
+    height: 1.2em;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    width: 100%;
+    color: #fff;
+    border: none;
+    font-family: font-bold, sans-serif;
+}
+
+div.popup {
+    z-index: 2;
 }

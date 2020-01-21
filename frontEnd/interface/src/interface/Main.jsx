@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import {Popover, OverlayTrigger, ButtonToolbar} from "react-bootstrap";
 import { Alert } from 'reactstrap';
 import Popup from '../component/Popup';
+import Cookie from "js-cookie";
 
 import './css/Main.css';
 import HistoricoIcon from "../img/tempo-restante.svg";
@@ -24,7 +25,6 @@ class Main extends Component {
     
     constructor (props) {
         super(props);
-        console.log("MAIN: " + this.props.mainOpacity + " " + this.props.mainPointerEvents);
         this.timer = 0;
         this.state = {
             word: "",
@@ -38,7 +38,16 @@ class Main extends Component {
                 varOR: "",
                 varIdGr: "",
                 varRemRecDir: "",
-                varCYK: ""
+                varCYK: "",
+
+                varChomSky: "",
+                varChomSkyNRIS: "",
+                varChomSkyENC: "",
+                varChomSkyNC: "",
+                varChomSkyOT: "",
+                varChomSkyOR: "",
+                varChomSkyRDI: "",
+                varChomFNG: ""
             },
             grammarV: "",
             grammarE: "",
@@ -54,7 +63,8 @@ class Main extends Component {
                 lEsseniallyNonContract : ["Essentially non contractile","Essencialmente não contrátil"],
                 lNonCascade : ["No chain rules","Sem regras da cadeia"],
                 lOnlyTerm : ["Only terminals","Apenas terminais"],
-                lOnlyReach : ["Only reacheable","Apenas alcançáveis"],
+                lOnlyReach : ["Only reachable","Apenas alcançáveis"],
+                lChomsky: "Chomsky & Greibach",
                 lIdGrammar: ["Grammar Identification", "Identificação da Gramática"],
                 limmedLeftRecursion: ["Removal of Direct Left Recursion", "Remoção de Recursão Direta"],
                 lCYK: "CYK",
@@ -66,7 +76,17 @@ class Main extends Component {
                 lSolutionCompleteENC: "",
                 lSolutionCompleteNC: "",
                 lSolutionCompleteOT: "",
-                lSolutionCompleteRemRecDir: ""
+                lSolutionCompleteOR: "",
+                lSolutionCompleteRemRecDir: "",
+
+                lSolutionCompleteChsNRIS: "",
+                lSolutionCompleteChsENC: "",
+                lSolutionCompleteChsNC: "",
+                lSolutionCompleteChsOT: "",
+                lSolutionCompleteChsOR: "",
+                lSolutionCompleteChomSky: "",
+                lSolutionCompleteRDI: "",
+                lSolutionCompleteChsFNG: ""
             },
 
             lang: "en",
@@ -81,23 +101,22 @@ class Main extends Component {
 
             menssage: "is empty field grammar",
 
-            // visibleSolutionNRIS: "none",
-            // visibleSolutionENC: "none",
-            // visibleSolutionNC: "none",
-            // visibleSolutionOT: "none",
-            // visibleSolutionOR: "none",
             user: {
-                id: this.props.user.id,
-                name: this.props.user.name,
-                email: this.props.user.email,
-                dateCreation: this.props.user.dateCreation,
-                historicalGrammar: this.props.user.historicalGrammar
+                id: this.props.mainUser.id,
+                name: this.props.mainUser.name,
+                email: this.props.mainUser.email,
+                dateCreation: this.props.mainUser.dateCreation,
+                historicalGrammar: (this.props.mainUser.historicalGrammar.length === undefined)?
+                    [] : this.props.mainUser.historicalGrammar
             },
             mainOpacity: this.props.mainOpacity,
             mainPointerEvents: this.props.mainPointerEvents,
             showPopup: false,
-            stepHeight: ["3.5em", "3.5em", "3.5em", "3.5em", "3.5em", "3.5em"],
-            stepOverflowY: ["hidden", "hidden", "hidden", "hidden", "hidden", "hidden"]
+            stepHeight: ["2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em", "2.5em"],
+            stepOverflowY: ["hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden", "hidden",
+                            "hidden", "hidden"],
+
+            mainCredential: this.props.mainAuthorization
         };
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -109,9 +128,16 @@ class Main extends Component {
         this.historicoFunction = this.historicoFunction.bind(this);
         this.clickStep = this.clickStep.bind(this);
     }
+
+    reload () {
+        alert("Falha de login ");
+        Cookie.remove('token', { path: '/' });
+        Cookie.remove('userMail', { path: '/' });
+        window.location.href = "/";
+    }
     
-    onChange(values) {
-        console.log("Grammar " + values);
+    onChange (values) {
+
         let tempGrammar = values;
         let len = values.length;
         let wordTest = values[len-2] + values[len-1];
@@ -135,7 +161,6 @@ class Main extends Component {
             tempGrammar = values;
         }
         
-        console.log("BACKUP : " + tempGrammar);
 
         if (this.validation(tempGrammar))
             this.setState({buttonValidationSubmit : "success"});
@@ -144,9 +169,9 @@ class Main extends Component {
 
     validation (text) {
 
-        console.log("Validation " + text.length + " " + text);
+
         if (text.length <= 2) {
-            console.log("1 if");
+   
             return false;
         }
 
@@ -154,15 +179,12 @@ class Main extends Component {
         
         for (let rule of rules) {
 
-            console.log("RULES: " + rule);
+ 
             if ((rule === "") || (rule === " ")) //Não tem necessidade de verificar espaços
                 continue;
 
             let tmpR = rule.split("→");
             if ((tmpR[0] === rule) || (tmpR.length > 2)) {
-                console.log("2 if: " + (tmpR[0] === rule) + " " + (tmpR.length > 2) +
-                " len : " + tmpR.length + " rule: " + rule + "\n");
-                console.log("tmpR: " + tmpR);
 
                 if (this.state.lang === "pt")
                     this.setState({menssage: "Faltando →"});
@@ -171,9 +193,6 @@ class Main extends Component {
             }
             if ((tmpR[0] === " ") || (tmpR[0] === "") ||
             (tmpR[1] === " ") || (tmpR[1] === "")) {
-
-                console.log("3 if " + tmpR + " " + (tmpR[0] === " ") + " " + (tmpR[0] === "")
-                + " " + (tmpR[1] === " ") + " " + (tmpR[1] === ""));
 
                 if (this.state.lang === "pt")
                     this.setState({menssage: "gramática invalida"});
@@ -185,7 +204,6 @@ class Main extends Component {
             for (let varTer of tmpR2) {
                 
                 if ((varTer === "") || (varTer === " ")) {
-                    console.log("4 if");
 
                     if (this.state.lang === "pt")
                         this.setState({menssage: "Faltando regra após |"});
@@ -203,7 +221,7 @@ class Main extends Component {
         let rightSide = [];
         for (let rule of rules) {
             let aux = rule.replace(/ /g,'');
-            console.log("aux: " + aux);
+
             aux = aux.split("→");
             if (aux.length > 1){
                 aux = aux[1].split("|");
@@ -229,12 +247,9 @@ class Main extends Component {
         let eqif = 1;
         for (let v of rightSide) {
             for (let l of v) {
-                console.log("LETTER : " + l)
-                console.log("1ª: " + (l.toUpperCase() === l) );
-                console.log("2ª: " + !leftSide.includes(l));
-                console.log("3ª: " + !(/[0-9]/ !== l));
+
                 if (l.toUpperCase() === l && !leftSide.includes(l) &&!(/[0-9]/.test(l))) {
-                    console.log("RIGHTSide: " + l);
+
                     eqif = 0;
                 }
             }
@@ -252,11 +267,6 @@ class Main extends Component {
             }
         }*/
 
-        console.log("ListLeft : " + variablesTemp + "TAM : " + variablesTemp.length);
-        console.log("listRule : " + listRule + "TAM: " + listRule.length);
-        //let eqif = listRule.every(elem => variablesTemp.includes(elem));
-        console.log("Elements is equals: " + eqif);
-
         if (!eqif) {
             let subtractionElem = [];
 
@@ -264,7 +274,7 @@ class Main extends Component {
                 if (!variablesTemp.includes(elem)){subtractionElem.push(elem); }
                 return 0;
             } );
-            console.log("5 if");
+
             if (this.state.lang === "pt")
                 this.setState({menssage: `Sua gramática não está definido ${subtractionElem.toString()}
                 como regra da esquerda.`});
@@ -273,32 +283,29 @@ class Main extends Component {
             return false;
         }
 
-        console.log("Último true");
         return true;
     }
  
     historicoFunction() {
-        console.log("Historical Grammar : " + this.state.user.historicalGrammar.length);
+
         if (this.state.user.historicalGrammar.length > 0) {
             let grString = [];
-            console.log(this.state.user.historicalGrammar[0].grammar);
-            console.log("AQUIBDUBA" + this.state.user.historicalGrammar + " " 
-            + this.state.user.historicalGrammar.length);
+            
             for (let hg of this.state.user.historicalGrammar) {
-                console.log("Tets: " + hg);
-                grString.push(<div dangerouslySetInnerHTML={{__html:
-                            "<button className='btn btn-primary'>WordInput: " + hg.wordInput + "<br/>" +
+               
+                grString.push(<div className="itemFuncHis" dangerouslySetInnerHTML={{__html:
+                            "<button class='btn btn-primary'>WordInput: " + hg.wordInput + "<br/>" +
                                 "GrammarInput: " + hg.grammar + "<br/><br/></button>"}}
                 onClick={_ => this.writeHist(hg)} ></div>);
             }
-            console.log("Tets: " + grString);
+            
             return grString;
         } else return "Sem Dados";
     
     }
     
     writeHist(hg){
-        console.log("nao ta entrando aki" + hg.wordInput + " " + hg.grammar);
+        
         this.togglePopup();
         // this.onChange(gram);
         this.setState({variables: hg.grammar,
@@ -309,7 +316,6 @@ class Main extends Component {
     
     onSubmit (values) {
 
-        console.log("Validation Button : " + this.state.buttonValidationSubmit);
         if (this.state.buttonValidationSubmit === "success") {
             if (values.word === "") {
                 values.word = " ";
@@ -321,9 +327,7 @@ class Main extends Component {
                 activateOtherPage: values.variables,
                 lang: this.state.lang
             };
-    
-            console.log("Variables : " + dados.variables);
-    
+        
             this.setState({variables: dados.variables});
             
             this.setState({activateOtherPage: dados.activateOtherPage});
@@ -335,22 +339,24 @@ class Main extends Component {
                 wordInput: dados.word,
             }
     
-            DataService.criaHTML(dados)
+            DataService.criaHTML(dados, this.state.mainCredential)
                 .then(
-                    DataService.postSaveHistoricalGr(this.state.user.email, hg)
+                    DataService.postSaveHistoricalGr(this.state.user.email, hg, this.state.mainCredential)
                         .then(
                             response => {
                                 this.setState({user: response.data});
-                                console.log("USER with HG : " + this.state.user.id + " " + 
-                                this.state.user.email + " " + this.state.user.dateCreation + " " + 
-                                this.state.user.historicalGrammar);
+
+                            }
+                        )
+                        .catch(
+                            error => {
+                                alert("Falha ao salvar histórico");
                             }
                         )
                 )
                 .then(
                     response => {
-                        console.log(response.data);
-                        
+                                        
                         let vetV = "{";
                         let count = 0;
                         for (let elem of response.data[1]){
@@ -396,7 +402,12 @@ class Main extends Component {
                                 grammarS: <div className="grammarAttributes" dangerouslySetInnerHTML={{__html: "{" + response.data[0][0] + "}"}}></div>
                         });
                     }
-                ).then(_ => this.props.history.push(`/`));
+                ).then(_ => this.props.history.push(`/`))
+                .catch(
+                    error => {
+                        this.reload();
+                    }
+                );
 
             } else {
                 this.setState({ visibleAlert: true,
@@ -418,18 +429,22 @@ class Main extends Component {
         };
         
        
-        DataService.criaNonRecursiveInitial(dados)
+        DataService.criaNonRecursiveInitial(dados, this.state.mainCredential)
             
             .then(
                 response => {
-                    console.log(response.data);
-           
+                       
                     this.setState({varNRIS: <div> <br/>                   
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
                     lSolutionCompleteNRIS: <div className="popUpAccord">
                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
                 }
-            ).then(_ => this.props.history.push(`/`));
+            ).then(_ => this.props.history.push(`/`))
+            .catch(
+                error => {
+                    this.reload();
+                }
+            );
 
     }
 
@@ -438,36 +453,38 @@ class Main extends Component {
     retornar a gramática modificada caso tenha regras contráteis
     */
     onSubmitNonContracting (values) {
-        console.log("Non Contracting: " + values);
         let dados = {
             word: values.word,
             variables: values.variables
         };
          
-        DataService.criaNonContracting(dados)
+        DataService.criaNonContracting(dados, this.state.mainCredential)
             .then(
                 response => {
-                    console.log("Non Contracting: " + response.data);
-                    
-
+                 
                     this.setState({varENC: <div><br/>
                     <div dangerouslySetInnerHTML={{__html: response.data[1]}} /></div>,
                     lSolutionCompleteENC: <div className="popUpAccord">
                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
                 }
-            ).then(_ => this.props.history.push(`/`));
+            ).then(_ => this.props.history.push(`/`))
+            .catch(
+                error => {
+                    this.reload();
+                }
+            );
         }
         
     onSubmitNonCascade (values) {
-        console.log("Non Cascade: " + values);
+
         let dados ={
             word: values.word,
             variables: values.variables
         };
         
-        DataService.criaNonCascade(dados).then(
+        DataService.criaNonCascade(dados, this.state.mainCredential).then(
             response => {
-                console.log("Non Cascade: " + response.data);
+
                 
                 // this.setState({variables: response.data[2]});
                 this.setState({varNC: <div>
@@ -478,20 +495,23 @@ class Main extends Component {
                 lSolutionCompleteNC: <div className="popUpAccord">
                     <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div>});
             }
+        ).catch(
+            error => {
+                this.reload();
+            }
         )
     }
     
     onSubmitOnlyTerm (values) {
-        console.log("Only TERM values: " + values);
+ 
         let dados ={
             word: values.word,
             variables: values.variables
         };
         
-        DataService.criaOnlyTerm(dados).then(
+        DataService.criaOnlyTerm(dados, this.state.mainCredential).then(
             response => {
-                console.log("Only TERM: " + response.data);
-
+      
                 // this.setState({variables: response.data[2]});
                 this.setState({varOT: <div>
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
@@ -500,20 +520,23 @@ class Main extends Component {
                     lSolutionCompleteOT: <div className="popUpAccord">
                          <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div>});
             }
+        ).catch(
+            error => {
+                this.reload();
+            }
         )
     }
     
     onSubmitOnlyReach (values) {
-        console.log("Only REACH: " + values);
+
         let dados ={
             word: values.word,
             variables: values.variables
         };
         
-        DataService.criaOnlyReach(dados).then(
+        DataService.criaOnlyReach(dados, this.state.mainCredential).then(
             response => {
-                console.log("Only REACH: " + response.data);
-                
+                   
                 // this.setState({variables: response.data[2]});
                 this.setState({varOR: <div>
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
@@ -521,40 +544,43 @@ class Main extends Component {
                     lSolutionCompleteOR: <div className="popUpAccord">
                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
             }
+        ).catch(
+            error => {
+                this.reload();
+            }
         );
     }
 
     onRequestIdGrammar(values) {
-        console.log("Grammar Identification: " + values);
-        let dados ={
+         let dados ={
             word: values.word,
             variables: values.variables
         };
 
-        console.log("palavra: " + dados.word);
-        DataService.criaGrId(dados).then(
+           DataService.criaGrId(dados, this.state.mainCredential).then(
             response => {
-                console.log("GRaID: " + response.data[0] + response.data[0]);
-
+ 
                 this.setState({varIdGr: <div>
                     <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>
                      });
 
             }
+        ).catch(
+            error => {
+                this.reload();
+            }
         )
     }
 
     onSubmitImmedLeftRecursion(values) {
-        console.log("onSubmitImmedLeftRecursion: " + values);
-        let dados ={
+         let dados ={
             word: values.word,
             variables: values.variables
         };
         
-        DataService.createRemovingTheImmediateLeftRecursion(dados).then(
+        DataService.createRemovingTheImmediateLeftRecursion(dados, this.state.mainCredential).then(
             response => {
-                console.log("onSubmitImmedLeftRecursion: " + response.data);
-                
+                         
                 // this.setState({variables: response.data[2]});
                 this.setState({varRemRecDir: <div>
                     {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
@@ -562,24 +588,116 @@ class Main extends Component {
                     lSolutionCompleteRemRecDir: <div className="popUpAccord">
                         <div dangerouslySetInnerHTML={{__html: response.data[3]}}/></div> });
             }
+        ).catch(
+            error => {
+                this.reload();
+            }
         );
     }
 
 
     onSubmitCYK(values) {
-        console.log("onSubmitImmedLeftRecursion: " + values);
-        let dados ={
+         let dados ={
             word: values.word,
             variables: values.variables
         };
         
-        DataService.createCYK(dados).then(
+        DataService.createCYK(dados, this.state.mainCredential).then(
             response => {
-                console.log("CYK: " + response.data);
-                
+                    
                 // this.setState({variables: response.data[2]});
                 this.setState({varCYK: <div>
                     <br/><div dangerouslySetInnerHTML={{__html: response.data[1]}}/></div>});
+            }
+        ).catch(
+            error => {
+                this.reload();
+            }
+        );
+    }
+    
+    onSubmitChomsky(values){
+        let dados ={
+            word: values.word,
+            variables: values.variables
+        };
+
+        DataService.createChomsky(dados, this.state.mainCredential).then(
+            response => {
+                
+                let vetTemp = response.data[0].split('*++*');
+
+                this.setState({varChomSkyNRIS: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsNRIS: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+                
+                vetTemp = response.data[1].split('*++*');
+
+                this.setState({varChomSkyENC: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsENC: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+
+                vetTemp = response.data[2].split('*++*');
+
+                this.setState({varChomSkyNC: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsNC: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+                
+
+                vetTemp = response.data[3].split('*++*');
+
+                this.setState({varChomSkyOT: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsOT: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+                
+                vetTemp = response.data[4].split('*++*');
+
+                this.setState({varChomSkyOR: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsOR: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+
+                
+                vetTemp = response.data[5].split('*++*');
+
+                this.setState({varChomSky: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChomSky: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+
+
+                vetTemp = response.data[6].split('*++*');
+
+                this.setState({varChomSkyRDI: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteRDI: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+
+                
+                vetTemp = response.data[7].split('*++*');
+
+                this.setState({varChomFNG: <div>
+                    {/* <div dangerouslySetInnerHTML={{__html: response.data[0]}}/> */}
+                    <br/><div dangerouslySetInnerHTML={{__html: vetTemp[0]}}/></div>,
+                    lSolutionCompleteChsFNG: <div className="popUpAccord">
+                        <div dangerouslySetInnerHTML={{__html: vetTemp[1]}}/></div> });
+               
+
+            }
+        ).catch(
+            error => {
+                this.reload();
             }
         );
     }
@@ -594,34 +712,27 @@ class Main extends Component {
                             menssage: "Está vazio o campo da gramática",
                             index: 1});
         }
-        // if (this.state.palavra !== "") {
-        //     DataService.getGramatica()
-        //         .then(
-        //             response => {
-        //                 console.log(response);
-        //             }
-        //         );
-        //     DataService.getGramaticaHTML()
-        //         .then(
-        //             response => {
-        //                 console.log(response.data);
-        //                 this.setState({varHTML: response.data});
-        //             }
-        //         );
-        //     this.props.history.push(`/`);
-        // }
-
+        
     }
 
     componentDidUpdate(prevProps) {
         
         if ((this.props.mainOpacity !== prevProps.mainOpacity)
-        || this.props.mainPointerEvents !== prevProps.mainPointerEvents) {
-            this.setState({user: this.props.user,
+        || this.props.mainPointerEvents !== prevProps.mainPointerEvents ) {
+            this.setState({user: this.props.mainUser,
                 mainOpacity: this.props.mainOpacity,
-                mainPointerEvents: this.props.mainPointerEvents
+                mainPointerEvents: this.props.mainPointerEvents,
+                mainCredential: this.props.mainAuthorization
                             })
         }
+
+        let tempVarProps = this.props.mainUser.historicalGrammar;
+        let tempVarPrevs = prevProps.mainUser.historicalGrammar;
+        if (tempVarProps === undefined) tempVarProps = [];
+        if (tempVarPrevs === undefined) tempVarPrevs = [];
+
+        if ( tempVarProps.length > tempVarPrevs.length)
+            this.setState({user: this.props.mainUser});
     }
 
     startTimer() {
@@ -654,13 +765,13 @@ class Main extends Component {
     clickStep(i) {
         let stepH = this.state.stepHeight.slice();
         let stepO = this.state.stepOverflowY.slice();
-        if(stepH[i] === "3.5em"){
+        if(stepH[i] >= "2.5em"){
             stepH[i] = "17em";
             stepO[i] = "scroll";
         }
         else{
             document.getElementById("i"+i).scrollTo(0, 0);
-            stepH[i] = "3.5em";
+            stepH[i] = (i === 11) ? "3.5em" : "2.5em";
             stepO[i] = "hidden";
         }
         this.setState({
@@ -681,7 +792,7 @@ class Main extends Component {
 
                     <div style={{display:this.state.diplayPop}}>
                         <Content close={_ => this.setState({diplayPop : "none"})} numImg={this.state.numG}/>
-                     </div>
+                    </div>
                     <div className="row body" id="main-body" style={{opacity: this.state.mainOpacity, pointerEvents: this.state.mainPointerEvents}}>
                         <div className="col-lg-4 col-md-3 col-sm-0"></div>
                         <div className="col-12 col-sm-8 col-lg-3 col-md-4" id="text-area">
@@ -760,12 +871,17 @@ class Main extends Component {
                                         </OverlayTrigger>
                                     </ButtonToolbar>
 
-                                <div className = "hist-popup">
-                                    <button type = "button" className = "btn btn-time btn-m" onClick={/*this.historicoFunction*/this.togglePopup.bind(this)}><img alt="" src={HistoricoIcon} width="24"/></button>
+                                <div className="hist-popup">
+                                    
+                                    <button type = "button" className = "btn btn-time btn-m" onClick={this.togglePopup.bind(this)}><img alt="" src={HistoricoIcon} width="24"/></button>
                                     {this.state.showPopup ?
-                                    <Popup className="hist-popup" text={this.historicoFunction()} closePopup={this.togglePopup.bind(this)} />
+                                    <Popup
+                                        className="hist-popup" 
+                                        text={this.historicoFunction()} 
+                                        closePopup={this.togglePopup.bind(this)} />
                                     : null
                                     }
+                                    
                                 </div>
                                
                             </section>
@@ -800,7 +916,7 @@ class Main extends Component {
                         </div>
                     </div>
                     <br/>
-                    {/*{this.state.varHTML}*/}
+                    
                     <br/>
                     <div className="container grid grid-template-columns-3 conteudo">
 
@@ -819,18 +935,10 @@ class Main extends Component {
                                     <div className="internal-gram">
                                         {this.state.varNRIS}
                                     </div>
-                                    <div className="Internal i0" onClick={_ => this.clickStep(0)} style={{height: this.state.stepHeight[0], "overflow-y": this.state.stepOverflowY[0]}}>
+                                    <div className="Internal" id="i0" onClick={_ => this.clickStep(0)} style={{height: this.state.stepHeight[0], "overflow-y": this.state.stepOverflowY[0]}}>
                                         {this.state.lSolutionCompleteNRIS}
                                     </div>
-                                {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNRIS: "block"}) } >
-                                    <i className="fa fa-question-circle popbtn"></i> </div>
-                                <div className="AccorModal" style={{display: `${this.state.visibleSolutionNRIS}`}}>
-                                    <div className="AccordModal-content">
-                                        <span className="close-bttn"
-                                        onClick={_ => this.setState({visibleSolutionNRIS: "none"}) }>X</span>
-                                        {this.state.lSolutionCompleteNRIS}
-                                    </div>
-                                </div> */}
+                               
                             </Accordion>
                         </div>
 
@@ -841,18 +949,11 @@ class Main extends Component {
                                 <div className="internal-gram">
                                         {this.state.varENC}
                                     </div>
-                                {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionENC: "block"}) } >
-                                    <i className="fa fa-question-circle popbtn"></i> </div>
-                                <div className="AccorModal" style={{display: `${this.state.visibleSolutionENC}`}}>
-                                    <div className="AccordModal-content">
-                                        <span className="close-bttn"
-                                        onClick={_ => this.setState({visibleSolutionENC: "none"}) }>X</span> */}
+                               
                                 <div className="Internal" id="i1" onClick={_ => this.clickStep(1)} style={{height: this.state.stepHeight[1], "overflow-y": this.state.stepOverflowY[1]}}>
                                         {this.state.lSolutionCompleteENC}
                                 </div>
                                 
-                                    {/* </div>
-                                </div> */}
                         </Accordion>
                             
                         </div>
@@ -867,17 +968,11 @@ class Main extends Component {
                                     <div className="internal-gram">
                                         {this.state.varNC}
                                     </div>
-                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionNC: "block"}) } >
-                                        <i className="fa fa-question-circle popbtn"></i> </div>
-                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionNC}`}}>
-                                        <div className="AccordModal-content">
-                                            <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionNC: "none"}) }>X</span> */}
+
                                     <div className="Internal" id="i2" onClick={_ => this.clickStep(2)} style={{height: this.state.stepHeight[2], "overflow-y": this.state.stepOverflowY[2]}}>
                                         {this.state.lSolutionCompleteNC}
                                     </div>
-                                    {/* </div>
-                                    </div> */}
+
                             </Accordion>
                             
                         </div>
@@ -890,18 +985,12 @@ class Main extends Component {
                                     <div className="internal-gram">
                                         {this.state.varOT}
                                     </div>
-                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOT: "block"}) } >
-                                        <i className="fa fa-question-circle popbtn"></i> </div>
-                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionOT}`}}>
-                                        <div className="AccordModal-content">
-                                            <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionOT: "none"}) }>X</span> */}
+                                    
                                     <div className="Internal" id="i3" onClick={_ => this.clickStep(3)} style={{height: this.state.stepHeight[3], "overflow-y": this.state.stepOverflowY[3]}}>
                                         {this.state.lSolutionCompleteOT}
                                     </div>
                                             
-                                        {/* </div>
-                                    </div> */}
+
                             </Accordion>
                         
                         </div>
@@ -913,18 +1002,11 @@ class Main extends Component {
                                     <div className="internal-gram">
                                         {this.state.varOR}
                                     </div>
-                                    {/* <div className="AccordTrigger" onClick={_ => this.setState({visibleSolutionOR: "block"}) } >
-                                        <i className="fa fa-question-circle popbtn"></i> </div>
-                                    <div className="AccorModal" style={{display: `${this.state.visibleSolutionOR}`}}>
-                                        <div className="AccordModal-content reach">
-                                            <span className="close-bttn"
-                                            onClick={_ => this.setState({visibleSolutionOR: "none"}) }>X</span> */}
+                                    
                                     <div className="Internal" id="i4" onClick={_ => this.clickStep(4)} style={{height: this.state.stepHeight[4], "overflow-y": this.state.stepOverflowY[4]}}>
                                         {this.state.lSolutionCompleteOR}
                                     </div>
-                                            
-                                        {/* </div>
-                                    </div> */}
+
                             </Accordion>
                         </div>
 
@@ -932,31 +1014,130 @@ class Main extends Component {
 
                     <div className="container grid grid-template-columns-3 conteudo">
                         <div className="item">
-                                <Accordion 
-                                    title={this.state.displayLang.limmedLeftRecursion[this.state.index]}
-                                    onToggle={_ => this.onSubmitImmedLeftRecursion(this.state)}>
-                                        <div className="internal-gram">
-                                            {this.state.varRemRecDir}
-                                        </div>
-                                        
-                                        <div className="Internal" id="i5" onClick={_ => this.clickStep(5)} style={{height: this.state.stepHeight[5], "overflow-y": this.state.stepOverflowY[5]}}>
-                                            {this.state.lSolutionCompleteRemRecDir}
-                                        </div>
-                                </Accordion>
-                            </div>
+                            <Accordion 
+                                title={this.state.displayLang.limmedLeftRecursion[this.state.index]}
+                                onToggle={_ => this.onSubmitImmedLeftRecursion(this.state)}>
+                                    <div className="internal-gram">
+                                        {this.state.varRemRecDir}
+                                    </div>
+                                    
+                                    <div className="Internal" id="i5" onClick={_ => this.clickStep(5)} style={{height: this.state.stepHeight[5], "overflow-y": this.state.stepOverflowY[5]}}>
+                                        {this.state.lSolutionCompleteRemRecDir}
+                                    </div>
+                            </Accordion>
+                        </div>
 
-                            <div className="item cyk">
-                                <Accordion 
-                                    title={this.state.displayLang.lCYK}
-                                    onToggle={_ => this.onSubmitCYK(this.state)}>
-                                        <div className="internal-gram cyk">
+                        <div className="item cyk">
+                            <Accordion 
+                                title={this.state.displayLang.lCYK}
+                                onToggle={_ => this.onSubmitCYK(this.state)}>
+                                    <div className="internal-gram cyk">
+                                        <div className="cymk">
                                             {this.state.varCYK}
                                         </div>
-                                </Accordion>
-                            </div>
+                                    </div>
+                            </Accordion>
+                        </div>
 
                         
+                    </div>
+                    <div className="container grid grid-template-columns-1 conteudo">
+                        <div className="item">
+                            <Accordion title={this.state.displayLang.lChomsky} onToggle={_=>this.onSubmitChomsky(this.state)}>
+                                
+                                <div className="internal-gram">
+                                    {this.state.varChomSky}
+                                </div>
+                                <div className="container grid grid-template-columns-3 conteudo">
+                                    <div id="initial-non-recursive-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.lInitialNonRec[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyNRIS}
+                                        </div> 
+                                        <div className="Internal" id="i6" onClick={_ => this.clickStep(6)} style={{height: this.state.stepHeight[6], "overflow-y": this.state.stepOverflowY[6]}}>
+                                            {this.state.lSolutionCompleteChsNRIS}
+                                        </div>
+                                    </div>
+
+                                    <div id="essentially-non-contractile-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.lEsseniallyNonContract[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyENC}
+                                        </div>
+                                        <div className="Internal" id="i7" onClick={_ => this.clickStep(7)} style={{height: this.state.stepHeight[7], "overflow-y": this.state.stepOverflowY[7]}}>
+                                            {this.state.lSolutionCompleteChsENC}
+                                        </div>
+                                    </div>
+                                    <div id="no-chain-rules-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.lNonCascade[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyNC}
+                                        </div>
+                                        <div className="Internal" id="i8" onClick={_ => this.clickStep(8)} style={{height: this.state.stepHeight[8], "overflow-y": this.state.stepOverflowY[8]}}>
+                                            {this.state.lSolutionCompleteChsNC}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="container grid grid-template-columns-3 conteudo">
+                                    
+                                    <div id="only-terminals-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.lOnlyTerm[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyOT}
+                                        </div>
+                                        <div className="Internal" id="i9" onClick={_ => this.clickStep(9)} style={{height: this.state.stepHeight[9], "overflow-y": this.state.stepOverflowY[9]}}>
+                                            {this.state.lSolutionCompleteChsOT}
+                                        </div>
+                                    </div>
+
+                                    <div id="only-reacheable-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.lOnlyReach[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyOR}
+                                        </div>
+                                        <div className="Internal" id="i10" onClick={_ => this.clickStep(10)} style={{height: this.state.stepHeight[10], "overflow-y": this.state.stepOverflowY[10]}}>
+                                            {this.state.lSolutionCompleteChsOR}
+                                        </div>
+                                    </div>
+
+                                    <div className="item i-chomsky">
+                                        <div className="internal-gram-c">
+                                            {this.state.lSolutionCompleteChomSky}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="container grid grid-template-columns-2 conteudo">
+                                    
+                                    <div id="only-reacheable-chomsky" className="item i-chomsky">
+                                        <div className="accordion_chomsky_internal">{this.state.displayLang.limmedLeftRecursion[this.state.index]}</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomSkyRDI}
+                                        </div>
+                                        <div className="Internal" id="i11" onClick={_ => this.clickStep(11)} 
+                                        style={{height: this.state.stepHeight[11], "overflow-y": this.state.stepOverflowY[11]}}>
+                                            {this.state.lSolutionCompleteRDI}
+                                        </div>
+                                    </div>
+
+
+                                    <div id="only-reacheable-chomsky" className="item i-chomsky">
+                                    <div className="accordion_chomsky_internal">Greibach</div>
+                                        <div className="internal-gram">
+                                            {this.state.varChomFNG}
+                                        </div>
+                                        <div className="Internal" id="i12" onClick={_ => this.clickStep(12)} 
+                                        style={{height: this.state.stepHeight[12], "overflow-y": this.state.stepOverflowY[12]}}>
+                                            {this.state.lSolutionCompleteChsFNG}
+                                        </div>
+                                    </div>
+
+                                    </div>
+                            </Accordion>
                         </div>
+                    </div>
+                    
                     
                 </React.Fragment>
             );

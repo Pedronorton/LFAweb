@@ -28,27 +28,36 @@
 }
 .modal2 > .close {
   cursor: pointer;
-  display: grid;
   padding: 0px 2px;
   line-height: 20px;
-  right: 1%;
-  top: 1%;
   font-size: 24px;
-  background: #1a0202;
-  border-radius: 50%;
+  background: #796a6a;
   border: 1px solid black;
   position: absolute;
+  right: 9%;
+  top: 1%;
+  width: 2em;
+  height: 2em;
+  z-index: 1;
+  opacity: 1;
+  box-shadow: 9px 8px 0px 0px #242824;
 }
 
 .close {
     -moz-appearance: none;
     float: right;
     font-weight: var(--ifm-font-weight-bold);
-    opacity: .5;
     outline: 0;
 }
 
 button.close:hover {
     background: red;
     opacity: .9;
+}
+
+div.content img {
+  position: relative;
+  margin-top: 20%;
+  margin-left: 2%;
+  top: -21em;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import './Popup.css';
+//import '../interface/css/Main.css';
 
 
 class Popup extends React.Component {
@@ -13,10 +14,12 @@ class Popup extends React.Component {
 
     render() {  
         return (  
-            <div className='popup'>  
+            <div className='popup'>
+                <button className="btn btn-secondary cls" onClick={this.props.closePopup}>X</button>
                 <div className='popup_inner'>
-                    { this.state.value }
-                    <button onClick={this.props.closePopup}>close me</button>  
+                    <div className="container grid grid-template-col-3">
+                        { this.state.value }
+                    </div>  
                 </div>
                 
             </div>  
