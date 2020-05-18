@@ -1,0 +1,43 @@
+Relatório Takeshi
+
+- Gramática01: ok/10 testes
+
+- Gramática02: Erro: testNoTerminals() e testPreFNC(), testPreFNC4(),testPreFNCComplete() (* Encara o lâmbda como um não terminal)/12 testes
+
+- Gramática03: Erro: testNoTerminals() /12 testes
+
+- Gramática04: Erro: testNoTerminals(), testPreFNC(),  testPreFNC4(),testPreFNCComplete()
+
+- Gramática05: ok / 7 testes
+
+- Gramática06: Erro: testNoTerminals()  testPreFNC4(),testPreFNCComplete() / 11 testes
+
+- Gramática07: ok / 7 testes
+
+- Gramática08: ok / 1 teste
+
+- Gramática09: ok / 1 teste
+
+- Gramática10: Erro: testNoTerminals() / 11 testes
+
+- Gramática11: Erro: testInitialSymbolNotRecursive(), testNoTerminals() e testPreFNC(), testPreFNC2(),testPreFNC3() testPreFNC4(),testPreFNCComplete()   / 20 testes
+
+- Gramática12: // Erro: testNoTerminals() e testPreFNC(), testPreFNC2(), testPreFNC4(), testGrammarEssentiallyNonContracting() ** essa está comentada / 11 testes
+
+- Gramática13: // Erro: testNoTerminals() e testPreFNC() / 11 testes
+
+- Gramática15: //Erro: testNoTerminals() e testPreFNC(),  testPreFNC4(),testPreFNCComplete() / 11 testes
+
+- Gramática16: ok / 11 testes
+
+- Gramática17: ok / 11 testes
+
+- Gramática18: ok / 11 testes
+
+- Gramática19: ok / 12 testes
+
+- Gramática20: //Erro: testPreFNC(), testPreFNC4(), testPreFNCComplete(), testNoTerminals(),  / 12 testes
+
+- Gramática21: //Erro: testRemovingTheImmediateLeftRecursion() / 12 testes
+
+- Gramática22: ok / 11 testes
