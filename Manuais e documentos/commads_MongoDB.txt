@@ -1,2 +1,11 @@
 db.getCollection("User").find({})
 db.getCollection("User").drop()
+
+É necessário criar uma colection chamada ROLES para ter acesso de usuário e de admin. 
+Para isso, entre no mongo e digite
+$ use dblfaweb
+$ db.roles.insertMany([
+   { name: "ROLE_USER" },
+   { name: "ROLE_ADMIN" },
+])
+Isso irá mapear quem é usuário de quem é admin
